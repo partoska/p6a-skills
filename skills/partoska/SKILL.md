@@ -1,30 +1,69 @@
 ---
 name: partoska
-description: Help users accomplish tasks with Partoska.com photo-sharing service for events. Guide setup, construct p6a CLI commands, build workflows, and script media sync/management.
+description: Help users accomplish tasks with Partoska.com photo-sharing service for events. Guide setup, construct p6a CLI commands, build workflows, script media sync/management, and use the Partoska MCP server when an agent is in the loop.
 ---
 
-# Partoska Command-Line Tool
+# Partoska Agent Skills
 
 ## Usage
 
-- `/partoska` — describe what you want to do; Claude will figure out the right command
+- `/partoska` — describe what you want to do; the assistant will figure out the right command
+- `/partoska create invitation for event B-Day` — use event data for your answer
 - `/partoska sync my photos to ~/backup` — get the exact command to run
 - `/partoska script to back up all my favorite events nightly` — get a shell script
 
 ## What This Skill Does
 
-This skill makes you an expert on using [Partoska.com](https://partoska.com) — a photo-sharing service for events — via the `p6a` command-line tool. When invoked, you will:
+This skill makes you an expert on using [Partoska.com](https://partoska.com) — a photo-sharing service for events — via the `p6a` command-line tool and the Partoska MCP server. When invoked, you will:
 
-1. Verify the user has `p6a` installed and authenticated (guide setup if not)
-2. Understand what the user is trying to accomplish
-3. Construct the correct `p6a` command(s) with exact flags and arguments
-4. Offer shell scripting help for automation workflows
+1. Understand what the user is trying to accomplish
+2. Determine the right approach — CLI or MCP (see below)
+3. If using the CLI — verify the user has `p6a` installed and authenticated (guide setup if not)
+4. Construct the exact commands or call the appropriate tools
+5. Offer shell scripting help for automation workflows
 
 ---
 
-## Prerequisites
+## CLI vs MCP Server
 
-Before any command will work, the user must have `p6a` installed and be logged in.
+Many actions can be performed two ways:
+
+| Approach | Best for |
+| --- | --- |
+| `p6a` CLI | Shell scripts, cron jobs, CI/CD pipelines — runs anywhere, no agent required |
+| Partoska MCP server (`https://api.partoska.com/mcp/v1`) | In-session tasks where an agent is already running — returns structured data directly |
+
+**The key distinction is whether an agent is in the loop.** MCP tools only exist within an active agent session — shell scripts and cron jobs run outside any agent context and must use `p6a`. When an agent *is* orchestrating work, it can use MCP tools directly for cleaner structured results. However, if the task is to *write a script* the user will run later, always use `p6a` commands — those scripts will execute outside any agent session.
+
+**MCP cannot download full-quality photos.** The MCP protocol is not designed for binary file transfer — `event-photo-preview` returns a low-resolution preview suitable for inspection, not the original file. Transferring full-resolution images through MCP would also risk overflowing the agent's context window. For any actual download of full-quality media, use `p6a download`.
+
+**MCP and CLI output formats differ.** The CLI outputs plain text, tables, JSON, or CSV depending on flags. MCP tools return structured data defined by their output schema — consult the tool's schema for the exact field names and types rather than assuming they match CLI output.
+
+### MCP Tools Available
+
+When the Partoska MCP server is connected, the following tools are available to the agent:
+
+| MCP Tool | Equivalent CLI | Notes |
+| --- | --- | --- |
+| `event-query` | `p6a list -q` | List/filter events |
+| `search` | `p6a list -q` | Full-text search across events; narrower than `event-query` |
+| `event-create` | `p6a create` | |
+| `event-update` | `p6a update` | |
+| `event-photo-list` | `p6a media` | |
+| `event-photo-preview` | `p6a download` (single file) | Preview only in MCP, full quality in p6a |
+| `event-share-qr` | `p6a qr` | Returns QR code data/URL; use `p6a qr` to save a file |
+| `fetch` | — | Raw API fetch for endpoints not covered by other tools |
+
+**CLI-only (no MCP equivalent):**
+- `p6a sync` — bulk download of all events into organized subdirectories; has no MCP equivalent
+- `p6a link` — fetch the primary invite URL for an event; use `fetch` as a workaround if needed
+- `p6a login` / `p6a logout` — credential management is handled outside the MCP session
+
+---
+
+## Prerequisites (CLI only)
+
+The following steps are only needed if using the `p6a` CLI. If the MCP server is available and sufficient for the task, skip this section.
 
 ### Step 1: Install p6a
 
@@ -223,16 +262,3 @@ p6a link -e "$EVENT_ID"
 - `p6a sync` is idempotent — safe to run repeatedly without re-downloading.
 - Event IDs are UUIDs (e.g., `12cafe34-5b8a-4d2e-9f01-0203a4b5c6d7`); use `p6a list -1` to retrieve them.
 - Use `-D` to maintain separate credential profiles for different Partoska accounts.
-
----
-
-## How to Use this Skill?
-
-When this skill is invoked:
-
-1. **Check prerequisites first** — If the user hasn't mentioned having `p6a` installed or being logged in, ask or guide them through the Prerequisites section above before proceeding.
-2. **Identify the user's goal** — What are they trying to accomplish? (sync, share, list, automate, etc.)
-3. **Construct the exact command(s)** — Use the reference above. Always include required flags; explain optional ones.
-4. **If scripting is needed** — Write a complete, working shell script with `set -euo pipefail` and clear comments.
-5. **If the user needs an event ID first** — Show them `p6a list` to get it before the target command.
-6. **Be concise** — Show the command first, explain after. Do not repeat the full reference unless asked.
