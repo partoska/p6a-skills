@@ -1,6 +1,10 @@
 ---
 name: partoska
 description: Help users accomplish tasks with Partoska.com photo-sharing service for events. Guide setup, construct p6a CLI commands, build workflows, script media sync/management, and use the Partoska MCP server when an agent is in the loop.
+license: MIT
+metadata:
+  author: Partoska Laboratory
+  version: "1.0.0"
 ---
 
 # Partoska Agent Skills

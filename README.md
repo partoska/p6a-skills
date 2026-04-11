@@ -24,11 +24,13 @@ Then invoke it in your agent:
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](LICENSE) file for details.
 
-Copyright 2026 Fabrika Charvat s.r.o.
+Copyright (C) 2026 Fabrika Charvat s.r.o.
+Developed by [Partoska Laboratory](https://lab.partoska.com) team.
 
 ## Links
 
 - **Partoska Website:** [https://www.partoska.com](https://www.partoska.com)
 - **Project Website:** [https://lab.partoska.com/p6a](https://lab.partoska.com/p6a)
+- **Partoska Command-Line Tool:** [https://github.com/partoska/p6a-cmd](https://github.com/partoska/p6a-cmd)
