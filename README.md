@@ -1,6 +1,6 @@
-# Agent Skills for Partoska Command-Line Tool
+# Agent Skills for Partoska
 
-A collection of agent skills for the [`p6a`](https://github.com/partoska/p6a-cmd) command-line tool, the CLI for [Partoska.com](https://partoska.com) for a photo-sharing service for events.
+A collection of agent skills for [Partoska.com](https://partoska.com), a photo-sharing service for events. Supports both the [`p6a`](https://github.com/partoska/p6a-cmd) command-line tool and the Partoska MCP server.
 
 ## Installation
 
@@ -19,7 +19,8 @@ Then invoke it in your agent:
 
 ## Requirements
 
-- [`p6a`](https://github.com/partoska/p6a-cmd/releases) installed and authenticated (`p6a login`)
+- **CLI usage:** [`p6a`](https://github.com/partoska/p6a-cmd/releases) installed and authenticated (`p6a login`)
+- **MCP usage:** Partoska MCP server connected at `https://api.partoska.com/mcp/v1` (no CLI required)
 
 ## License
 
