@@ -25,11 +25,11 @@
 # You can contact the author(s) via email at ask <at> partoska.com.
 #
 
-name: Release
+name: Build
 on:
   push:
     tags:
-      - "v*"
+      - "build-*"
 permissions:
   contents: write
 jobs:
@@ -38,16 +38,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Pack skill
+      - name: Pack skills
         run: |
+          VERSION=$(grep '^  version:' skills/partoska/SKILL.md | sed 's/.*"\(.*\)"/\1/')
+          ARTIFACT="partoska_skill_v${VERSION}.zip"
+          echo "ARTIFACT=$ARTIFACT" >> "$GITHUB_ENV"
           cd skills/partoska
-          zip -r "$GITHUB_WORKSPACE/partoska-skill.zip" .
+          zip -r "$GITHUB_WORKSPACE/$ARTIFACT" .
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            "$GITHUB_WORKSPACE/partoska-skill.zip#partoska-skill.zip" \
+            "$GITHUB_WORKSPACE/$ARTIFACT#$ARTIFACT" \
             --generate-notes \
             --title "$GITHUB_REF_NAME" \
             --verify-tag
