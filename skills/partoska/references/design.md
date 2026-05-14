@@ -39,16 +39,6 @@ The vibe drives typography, palette, and tone:
 
 **If you're not confident in the vibe, ask.** A short clarifying question ("Is this a wedding reception or an engagement party?", "Is the audience adults or kids?") is far cheaper than producing an asset in the wrong register. Don't blindly guess between two plausible categories.
 
-### Theme Colors and Branding
-
-For certain event types, there is usually an intentional color story or identity — ask before designing:
-
-- **Weddings**: couples commonly choose a theme color (gold, champagne, beige, dusty rose, violet, sage green, white, etc.). Ask: *"Do you have a wedding color palette or theme?"* If they don't, default to soft and neutral.
-- **Sports teams**: teams have colors and often a logo. Ask for both. If they can't provide a logo file, at minimum get the primary and secondary colors so the design feels like theirs rather than generic.
-- **Companies / corporate events**: brands have color guidelines and logos. Ask for a logo file or brand colors. If neither is available, keep the palette neutral and professional rather than inventing colors that might clash with the actual brand.
-
-Don't ask about theme colors for kids' parties, family celebrations, or other casual events where no brand identity is expected — infer from the vibe or ask only if the design feels incomplete.
-
 ---
 
 ## Step 2: Consider Using Event Photos
@@ -61,7 +51,7 @@ For *any* asset type, ask yourself whether a real photo from the event would mak
 
 1. List photos with `event-photo-list` (MCP) or `p6a media -e <event>` (CLI).
 2. Prefer the **most-favorited** ones — they're already validated as visually strong.
-3. Inspect candidates with `event-photo-preview` (MCP) or by downloading a few with `p6a download` (CLI).
+3. Inspect candidates with `event-photo-gallery` when browsing/comparing photos is useful, `event-photo-preview` when you only need one no-UI preview payload, or by downloading a few with `p6a download` (CLI).
 4. Offer 1–3 thematically appropriate options to the user; let them pick.
 
 ### When the event is new, empty, or has no relevant photos
@@ -70,7 +60,7 @@ Skip this step entirely. Don't ask the user to upload photos just to seed your d
 
 ### MCP caveat — full-quality photos are CLI-only
 
-The MCP `event-photo-preview` tool returns a **low-resolution preview only**, suitable for *picking* a thematic candidate but not for embedding in a final deliverable. In MCP-only sessions, default to **skipping the photo step**. If the user really wants a specific photo in the design, point them to `p6a download -e <event-id> -m <media-id> -t <path>` to fetch the full file themselves, then incorporate it.
+The MCP `event-photo-gallery` and `event-photo-preview` tools return **low-resolution previews only**, suitable for *picking* a thematic candidate but not for embedding in a final deliverable. In MCP-only sessions, default to **skipping the photo step**. If the user really wants a specific photo in the design, point them to `p6a download -e <event-id> -m <media-id> -t <path>` to fetch the full file themselves, then incorporate it.
 
 In CLI-driven sessions where you (or the user) can run `p6a download`, full-quality embedding is straightforward.
 
@@ -79,12 +69,6 @@ In CLI-driven sessions where you (or the user) can run `p6a download`, full-qual
 ## Step 3: Design the Asset
 
 Conventions per asset type. In all cases, match typography and color to the inferred vibe — no generic AI gradients or stock-template aesthetics.
-
-### Print vs. Digital Background Rule
-
-**Printed materials** (QR stands, invitations, tickets, and printed posters): keep the background **dominantly white**. Most users will print on standard white paper, or on decorative paper they chose specifically for its own texture and color. A dark or heavily colored background wastes ink, fights the paper, and often looks worse than a clean white design. Decorative elements, color accents, and typography can carry the theme without flooding the background. The exception is if the user explicitly says they are printing professionally on pre-colored stock and wants a full-bleed design.
-
-**Digital materials** (static HTML pages, slideshow slides, and anything displayed on a screen): this constraint does not apply. Rich backgrounds, dark modes, and full-bleed color all work fine.
 
 ### QR Stand
 
@@ -97,7 +81,7 @@ A small printed sign (typically table-card or A5/A6) inviting guests to upload t
   - Match language to the event's locale.
 - **Photo contest hook** (e.g. "Best photo wins X"): **ask the user first** before adding this. Never invent prizes unprompted — the host needs to actually deliver on whatever you put on the sign.
 - **Photos**: usually unnecessary on a QR stand. Offer only if the user asks.
-- Get the QR PNG via `event-share-qr` (MCP) or `p6a qr -e <event-id>` (CLI).
+- Get the QR PNG via `event-share-qr` (MCP no-UI payload) or `p6a qr -e <event-id>` (CLI). Use `event-browse` only when the user needs the interactive event app, event metadata, or event navigation too.
 
 ### Poster
 
@@ -150,20 +134,7 @@ A single slide for insertion into an existing PPT/Keynote/Google Slides deck —
 
 ---
 
-## Step 4: Preview and Self-Critique
-
-If you have the capability to render or preview the output (open a PDF, view an image, render HTML in a browser), do it — then critique the result before handing it to the user. Look for:
-
-- **Layout**: alignment, whitespace, visual hierarchy. Does the most important element (event name, QR) actually read first? Are margins consistent? Does anything feel cramped or floating?
-- **Clarity**: can a guest immediately understand what this is and what to do? Is the call to action obvious?
-- **Readability**: sufficient contrast between text and background, font size appropriate for the intended viewing distance, no text overlapping imagery.
-- **Anti-AI-sloppiness**: over-decorated gradients, mismatched font styles, Lorem Ipsum fragments left in, stock-template flourishes that have nothing to do with the event, filler copy like "Your event name here", hallucinated details not in the event data, or generic placeholder imagery. If you spot any of these, fix before delivering.
-
-If you cannot render or preview the output, skip this step and note the limitation to the user.
-
----
-
-## Step 5: Confirm and Deliver
+## Step 4: Confirm and Deliver
 
 - When in doubt about tone (formal vs. playful, minimal vs. ornate), confirm with the user before finalizing.
 - **Ask about the output format** before producing the final deliverable. Common options:

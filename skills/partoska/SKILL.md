@@ -4,7 +4,7 @@ description: Help users accomplish tasks with Partoska.com photo-sharing service
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Partoska Agent Skills
@@ -31,7 +31,7 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 
 **The key distinction is whether an agent is in the loop.** MCP tools only exist within an active agent session — shell scripts and cron jobs run outside any agent context and must use `p6a`. When an agent *is* orchestrating work, it can use MCP tools directly for cleaner structured results. If the task is to *write a script* the user will run later, always use `p6a` commands — those scripts will execute outside any agent session.
 
-**MCP cannot download full-quality photos.** The MCP protocol is not designed for binary file transfer — `event-photo-preview` returns a low-resolution preview suitable for inspection, not the original file. Transferring full-resolution images through MCP would also risk overflowing the agent's context window. For any actual download of full-quality media, use `p6a download`.
+**MCP cannot download full-quality photos.** The MCP protocol is not designed for binary file transfer — `event-photo-preview` and `event-photo-gallery` return low-resolution previews suitable for inspection, not the original file. Transferring full-resolution images through MCP would also risk overflowing the agent's context window. For any actual download of full-quality media, use `p6a download` (if `p6a` is available).
 
 **MCP and CLI output formats differ.** The CLI outputs plain text, tables, JSON, or CSV depending on flags. MCP tools return structured data defined by their output schema — consult the tool's schema for the exact field names and types rather than assuming they match CLI output.
 
@@ -46,8 +46,10 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 | `event-photo-list` | `p6a media` | |
 | `event-photo-favorite` | `p6a edit -f/-F` | Toggle favorite on a media item |
 | `event-photo-approve` | `p6a approve` | Approve media in a moderated event |
-| `event-photo-preview` | `p6a download` (single file) | Preview only in MCP, full quality in p6a |
-| `event-share-qr` | `p6a qr` | Returns QR code data/URL; use `p6a qr` to save a file |
+| `event-photo-gallery` | `p6a media` + `p6a download` | Interactive MCP App for browsing photos with event context, counts, favorite metadata, previews, and previous/next navigation |
+| `event-photo-preview` | `p6a download` (single file) | No-UI single photo preview payload; preview only in MCP, full quality in p6a |
+| `event-browse` | `p6a list` + `p6a qr` | Interactive MCP App for event details, metadata, navigation, and invite browsing |
+| `event-share-qr` | `p6a qr` | No-UI QR payload tool; use when the user explicitly asks for QR image/data |
 | `fetch` | — | Raw API fetch for endpoints not covered by other tools |
 
 **CLI-only (no MCP equivalent):**

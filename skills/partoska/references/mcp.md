@@ -22,15 +22,17 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
 ### Media Inspection & Curation
 
 - **`event-photo-list`** — list media items for a given event. Use to enumerate before previewing or curating.
-- **`event-photo-preview`** — fetch a low-resolution preview of a single media item. **Not a download** — for full-quality files use `p6a download` instead. Useful for inspecting content before deciding to favorite, approve, or share. On MCP-Apps-capable clients this renders as an inline interactive widget in the chat.
+- **`event-photo-gallery`** — interactive MCP App for browsing event photos. Use this when the user needs event context, favorite/count metadata, previous/next photo navigation, or an inline UI widget.
+- **`event-photo-preview`** — no-UI tool that fetches one photo preview from an event as a base64-encoded JPEG image. Use this when the user explicitly asks for a single photo preview/image/data, the client needs a simple machine-readable image result, or no gallery browsing context is needed. **Not a download** — for full-quality files use `p6a download` instead (if `p6a` is available).
 - **`event-photo-favorite`** — toggle favorite on a media item.
 - **`event-photo-approve`** — approve a media item in a moderated event (requires moderator permission).
 
 ### Sharing
 
-- **`event-share-qr`** — return QR code data/URL for an event invite. To save the QR code to a file, use `p6a qr` instead. On MCP-Apps-capable clients this renders as an inline interactive widget in the chat.
+- **`event-browse`** — interactive MCP App for browsing an event. Use this when the user needs event details, favorite/count metadata, previous/next event navigation, or an inline UI widget.
+- **`event-share-qr`** — no-UI tool that generates an event invite QR code payload. Use this when the user explicitly asks for a QR code/image/data, the client needs a simple machine-readable QR result, or no event browsing context is needed. For SVG and PNG formats the `data` field is base64-encoded; for UTF-8 it is a markdown code block. SVG and PNG may also return inline images for supported clients. To save the QR code to a file, use `p6a qr` (if `p6a` is available).
 
-> **MCP Apps note.** `event-share-qr` and `event-photo-preview` ship as MCP App widgets. If the user's AI client supports MCP Apps, prefer these tools over describing the content in text — the user gets the QR code or media preview displayed directly in the conversation rather than as a URL or base64 blob. On clients without MCP Apps support the tools still return the underlying data (URL / preview bytes) and degrade gracefully.
+> **MCP Apps note.** `event-browse` and `event-photo-gallery` ship as MCP App widgets. Prefer them when the user wants to browse, compare, or navigate. Use `event-share-qr` and `event-photo-preview` for payload-only, no-UI requests where the user or client explicitly needs QR/image data.
 
 ---
 
@@ -38,7 +40,7 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
 
 MCP is the cleaner surface for in-session work, but it cannot do everything. Switch to `p6a` when:
 
-- **Full-quality media download.** `event-photo-preview` returns a low-res preview only. Binary file transfer through MCP risks overflowing the agent's context — use `p6a download`.
+- **Full-quality media download.** `event-photo-preview` and `event-photo-gallery` return low-res previews only. Binary file transfer through MCP risks overflowing the agent's context — use `p6a download`.
 - **Bulk sync.** There is no MCP equivalent for `p6a sync` (organized subdirectory layout, idempotent skip-existing logic).
 - **Invite link.** No dedicated tool. As a workaround, call `fetch` against the `GET /event/{id}/link` endpoint, or use `p6a link -e <event-id>`.
 - **Login/logout.** Credentials are managed outside the MCP session. The MCP server is already authenticated for the active session — there is nothing to "log in" to via tools.
@@ -55,8 +57,10 @@ MCP is the cleaner surface for in-session work, but it cannot do everything. Swi
    → take the first matching event id
 2. event-photo-list (event = <id>)
    → enumerate media items
-3. event-photo-preview (event = <id>, media = <media-id>)
-   → fetch preview for any item the user wants to look at
+3. event-photo-gallery (event = <id>, media = <initial-media-id>)
+   → open an interactive gallery when the user wants to browse
+   OR event-photo-preview (event = <id>, media = <media-id>)
+   → fetch a no-UI preview payload for one explicit item
 ```
 
 When the user says "show me photos from the Birthday event," resolve the event with `event-query` (or `search` for free-form input), then list and preview as needed. Don't dump every preview at once — fetch on demand to keep the context manageable.
@@ -76,7 +80,8 @@ This is the MCP equivalent of the CLI `jq | xargs` approval loop. Iterate the ca
 ```
 1. event-photo-list (event = <id>)
 2. For each candidate the user wants flagged:
-   event-photo-preview (optional — only if visual confirmation is needed)
+   event-photo-gallery (optional — when browsing/comparing photos helps)
+   OR event-photo-preview (optional — when one no-UI preview is enough)
    event-photo-favorite (event = <id>, media = <media-id>, favorite = true)
 ```
 
@@ -85,8 +90,10 @@ This is the MCP equivalent of the CLI `jq | xargs` approval loop. Iterate the ca
 ```
 1. event-create (name = "Summer BBQ")
    → capture the returned event id
-2. event-share-qr (event = <id>)
-   → returns QR code data/URL the user can share inline
+2. event-browse (event = <id>)
+   → opens the interactive event app when browsing/context is useful
+   OR event-share-qr (event = <id>, format = png/svg/utf8)
+   → returns a no-UI QR code payload when the user asks for QR data/image
 ```
 
 If the user wants the QR as a file, switch to CLI: `p6a qr -e <event-id> -t invite.png`.
@@ -107,4 +114,4 @@ This is the canonical pattern when the user asks "download these photos" while M
 - Treat MCP responses as structured data; don't reformat them into CLI-style tables unless the user asks.
 - When an MCP tool is missing for a task, check whether `fetch` covers the underlying endpoint before falling back to CLI.
 - Event IDs are UUIDs and are interchangeable between MCP and CLI — an id obtained from `event-query` works in `p6a download -e <id>` without translation.
-- If the user will rerun the work later (e.g. nightly), don't perform it via MCP — produce a `p6a` script instead so it survives outside the session.
+- If the user will rerun the work later (e.g. nightly), don't perform it via MCP — produce a `p6a` script instead so it survives outside the session (if `p6a` is available).
