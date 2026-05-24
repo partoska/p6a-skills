@@ -137,10 +137,26 @@ p6a media -e <event-id> -f         # Only favorited items
 ### Share an Event
 
 ```bash
-p6a link -e <event-id>             # Print invite URL to stdout
-p6a qr -e <event-id>               # Download QR code as <id>-qr.png
-p6a qr -e <event-id> -t invite.png # Download QR code to custom file
-p6a qr -e <event-id> -s            # SVG format instead of PNG
+p6a link -e <event-id>                           # Print invite URL to stdout
+p6a qr -e <event-id>                             # Download QR code as <id>-qr.png
+p6a qr -e <event-id> -t invite.png               # Download QR code to custom file
+p6a qr -e <event-id> -F svg                      # SVG format instead of PNG
+```
+
+### Download a Share Card
+
+Pre-built themed cards containing the event QR code, intended to prompt guests to upload photos. Not a general-purpose design tool — for custom assets see `references/design.md`.
+
+```bash
+p6a card -e <event-id> -d bday                   # Birthday/anniversary theme (PDF)
+p6a card -e <event-id> -d tech                   # Corporate/conference theme (PDF)
+p6a card -e <event-id> -d match                  # Sport/tournament theme (PDF)
+p6a card -e <event-id> -d forest                 # Outdoor/nature theme (PDF)
+
+p6a card -e <event-id> -d bday -F jpg            # JPEG instead of PDF
+p6a card -e <event-id> -d bday -t card.pdf       # Custom output file
+p6a card -e <event-id> -d tech -b                # White background (no-background mode)
+p6a card -e <event-id> -d bday -l cs -p A4       # Czech locale, A4 paper
 ```
 
 ---

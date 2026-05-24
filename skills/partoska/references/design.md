@@ -6,6 +6,33 @@ The job is two-sided: (1) understand the event well enough to design *for* it, n
 
 ---
 
+## Pre-Built Option: Built-In Share Card Designs
+
+Partoska ships **built-in share card designs** — printable cards with an event QR code that invite guests to upload their photos. They are instant and require no design work.
+
+> **Important**: these cards serve one specific purpose — prompting guests to scan a QR code and upload photos to the event. They are **not** general-purpose design assets. For posters, tickets, invitations, slides, HTML pages, or anything beyond a photo-upload card, always produce a fully custom design (Steps 1–4 below).
+
+Available via `p6a card -e <event-id> -d <design>` (CLI) or `event-share-card` (MCP):
+
+| Design | Best for |
+| --- | --- |
+| `bday` | Birthday parties, anniversary celebrations |
+| `tech` | Corporate events, conferences, hackathons, tech meetups |
+| `match` | Sport events, tournaments, competitions |
+| `forest` | Outdoor events, nature-themed gatherings, school trips |
+
+**CLI** — `p6a card -e <event-id> -d <design>`:
+- `-F jpg` for JPEG output (default: PDF)
+- Optional: `-l <locale>`, `-L <layout>`, `-p <paper>`, `-b/--no-background`
+
+**MCP** — `event-share-card` tool:
+- Pass `design`, and optionally `locale`, `layout`, `paper`, `format` (`pdf`/`jpg`), `background` (`true`/`false`)
+- Returns a card payload directly in the session — no file download required
+
+**When the user asks for a photo-upload card or QR card**, recommend the matching built-in design before offering a custom one. For any other asset type, skip this section entirely and go straight to Step 1.
+
+---
+
 ## Step 1: Understand the Event
 
 Before designing anything, gather the minimum context:

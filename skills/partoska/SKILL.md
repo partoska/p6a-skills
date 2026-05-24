@@ -4,7 +4,7 @@ description: Help users accomplish tasks with Partoska.com photo-sharing service
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Partoska Agent Skills
@@ -50,6 +50,7 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 | `event-photo-preview` | `p6a download` (single file) | No-UI single photo preview payload; preview only in MCP, full quality in p6a |
 | `event-browse` | `p6a list` + `p6a qr` | Interactive MCP App for event details, metadata, navigation, and invite browsing |
 | `event-share-qr` | `p6a qr` | No-UI QR payload tool; use when the user explicitly asks for QR image/data |
+| `event-share-card` | `p6a card` | No-UI share card payload tool (PDF/JPG); requires a design theme; use when the user asks for a printable card |
 | `fetch` | — | Raw API fetch for endpoints not covered by other tools |
 
 **CLI-only (no MCP equivalent):**

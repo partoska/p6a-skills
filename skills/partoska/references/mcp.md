@@ -31,8 +31,15 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
 
 - **`event-browse`** — interactive MCP App for browsing an event. Use this when the user needs event details, favorite/count metadata, previous/next event navigation, or an inline UI widget.
 - **`event-share-qr`** — no-UI tool that generates an event invite QR code payload. Use this when the user explicitly asks for a QR code/image/data, the client needs a simple machine-readable QR result, or no event browsing context is needed. For SVG and PNG formats the `data` field is base64-encoded; for UTF-8 it is a markdown code block. SVG and PNG may also return inline images for supported clients. To save the QR code to a file, use `p6a qr` (if `p6a` is available).
+- **`event-share-card`** — no-UI tool that generates a printable share card payload (PDF or JPG). These are **pre-built themed cards** containing the event's QR code, intended to prompt guests to upload photos — not general-purpose design assets. Pass `design` (required) to select a theme:
+  - `bday` — birthday parties and anniversaries
+  - `tech` — corporate events, conferences, hackathons
+  - `match` — sport events and tournaments
+  - `forest` — outdoor and nature-themed events
 
-> **MCP Apps note.** `event-browse` and `event-photo-gallery` ship as MCP App widgets. Prefer them when the user wants to browse, compare, or navigate. Use `event-share-qr` and `event-photo-preview` for payload-only, no-UI requests where the user or client explicitly needs QR/image data.
+  Optional: `locale`, `layout`, `paper`, `format` (`pdf`/`jpg`), `background` (`true`/`false`). Consult `references/design.md` for guidance on when to offer a built-in card vs. a fully custom design.
+
+> **MCP Apps note.** `event-browse` and `event-photo-gallery` ship as MCP App widgets. Prefer them when the user wants to browse, compare, or navigate. Use `event-share-qr`, `event-share-card`, and `event-photo-preview` for payload-only, no-UI requests where the user or client explicitly needs QR/card/image data.
 
 ---
 
