@@ -12,7 +12,7 @@ Partoska ships **built-in share card designs** — printable cards with an event
 
 > **Important**: these cards serve one specific purpose — prompting guests to scan a QR code and upload photos to the event. They are **not** general-purpose design assets. For posters, tickets, invitations, slides, HTML pages, or anything beyond a photo-upload card, always produce a fully custom design (Steps 1–4 below).
 
-Available via `p6a card -e <event-id> -d <design>` (CLI) or `event-share-card` (MCP):
+Available via `p6a card -e <event-id> -d <design>` (CLI) or `card-gallery` / `card-link` (MCP):
 
 | Design | Best for |
 | --- | --- |
@@ -25,9 +25,9 @@ Available via `p6a card -e <event-id> -d <design>` (CLI) or `event-share-card` (
 - `-F jpg` for JPEG output (default: PDF)
 - Optional: `-l <locale>`, `-L <layout>`, `-p <paper>`, `-b/--no-background`
 
-**MCP** — `event-share-card` tool:
-- Pass `design`, and optionally `locale`, `layout`, `paper`, `format` (`pdf`/`jpg`), `background` (`true`/`false`)
-- Returns a card payload directly in the session — no file download required
+**MCP** — two tools, depending on the use case:
+- `card-gallery` — previews the card as an inline base64 JPEG (also an MCP App widget). Pass `design` (required) and optionally `locale`, `layout`, `paper`, `background`. Use for in-context preview.
+- `card-link` — returns a one-time download URL for the full-quality PDF or JPEG. Use when the user needs to download or print the file. It substitutes for `p6a card` only when the AI client is allowed to fetch and save files from that URL.
 
 **When the user asks for a photo-upload card or QR card**, recommend the matching built-in design before offering a custom one. For any other asset type, skip this section entirely and go straight to Step 1.
 
@@ -76,9 +76,9 @@ For *any* asset type, ask yourself whether a real photo from the event would mak
 
 ### When the event already has photos
 
-1. List photos with `event-photo-list` (MCP) or `p6a media -e <event>` (CLI).
+1. List photos with `photo-list` (MCP) or `p6a media -e <event>` (CLI).
 2. Prefer the **most-favorited** ones — they're already validated as visually strong.
-3. Inspect candidates with `event-photo-gallery` when browsing/comparing photos is useful, `event-photo-preview` when you only need one no-UI preview payload, or by downloading a few with `p6a download` (CLI).
+3. Inspect candidates with `photo-gallery` (returns inline base64 preview, supports previous/next navigation) or by downloading a few with `p6a download` (CLI).
 4. Offer 1–3 thematically appropriate options to the user; let them pick.
 
 ### When the event is new, empty, or has no relevant photos
@@ -87,7 +87,7 @@ Skip this step entirely. Don't ask the user to upload photos just to seed your d
 
 ### MCP caveat — full-quality photos are CLI-only
 
-The MCP `event-photo-gallery` and `event-photo-preview` tools return **low-resolution previews only**, suitable for *picking* a thematic candidate but not for embedding in a final deliverable. In MCP-only sessions, default to **skipping the photo step**. If the user really wants a specific photo in the design, point them to `p6a download -e <event-id> -m <media-id> -t <path>` to fetch the full file themselves, then incorporate it.
+`photo-gallery` returns a **compressed preview** suitable for *picking* a thematic candidate, not for embedding in a final deliverable. `photo-link` gives a one-time download URL; use it as a substitute for `p6a download` only when the AI client is allowed to fetch and save files from that URL. In MCP-only sessions without that capability, default to **skipping the photo step**. If the user really wants a specific photo in the design, point them to `p6a download -e <event-id> -m <media-id> -t <path>` to fetch the full file themselves, then incorporate it.
 
 In CLI-driven sessions where you (or the user) can run `p6a download`, full-quality embedding is straightforward.
 
@@ -108,7 +108,7 @@ A small printed sign (typically table-card or A5/A6) inviting guests to upload t
   - Match language to the event's locale.
 - **Photo contest hook** (e.g. "Best photo wins X"): **ask the user first** before adding this. Never invent prizes unprompted — the host needs to actually deliver on whatever you put on the sign.
 - **Photos**: usually unnecessary on a QR stand. Offer only if the user asks.
-- Get the QR PNG via `event-share-qr` (MCP no-UI payload) or `p6a qr -e <event-id>` (CLI). Use `event-browse` only when the user needs the interactive event app, event metadata, or event navigation too.
+- Get the QR via `event-browse` (inline svg/utf8, also an MCP App) or `event-qr-link` (one-time download URL for PNG/SVG/UTF-8) in MCP, or `p6a qr -e <event-id>` in CLI. Use `event-qr-link` as a file-producing substitute only when the AI client can download from the returned URL.
 
 ### Poster
 
