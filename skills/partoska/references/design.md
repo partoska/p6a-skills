@@ -20,6 +20,9 @@ Available via `p6a card -e <event-id> -d <design>` (CLI) or `card-gallery` / `ca
 | `tech` | Corporate events, conferences, hackathons, tech meetups |
 | `match` | Sport events, tournaments, competitions |
 | `forest` | Outdoor events, nature-themed gatherings, school trips |
+| `gold` | Luxury and elegant occasions |
+| `romantic` | Romantic events, weddings, proposals |
+| `neon` | Parties and nightlife events |
 
 **CLI** — `p6a card -e <event-id> -d <design>`:
 - `-F jpg` for JPEG output (default: PDF)

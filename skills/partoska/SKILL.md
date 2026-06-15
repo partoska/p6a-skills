@@ -4,7 +4,7 @@ description: Help users accomplish tasks with Partoska.com photo-sharing service
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "1.4.0"
+  version: "1.5.0"
 ---
 
 # Partoska Agent Skills
@@ -65,9 +65,10 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 
 1. **Is the user asking for a script, cron job, or anything that runs outside this session?** → use CLI. Read `references/cli.md`.
 2. **Does the task require full-quality file download, `p6a sync`, or `p6a link`?** → use CLI unless the MCP `*-link` tool returns a URL and the AI client is allowed to download from it. Read `references/cli.md`.
-3. **Are Partoska MCP tools available in this session and the work is in-session (browse, query, edit, approve, preview)?** → use MCP. Read `references/mcp.md`.
-4. **MCP tools not available and the user can install software?** → guide CLI setup, then read `references/cli.md`.
-5. **MCP tools not available and the environment cannot install/run `p6a`?** → tell the user the task isn't possible in this environment and explain why (no MCP connection, no CLI install path). Mention that they can unlock the MCP path by configuring their AI assistant to connect to the Partoska MCP server at `https://api.partoska.com/mcp/v1` (exact steps depend on the assistant — typically an "Add MCP server" or "Connectors" setting).
+3. **Is the user asking how to install, download, update, verify, or log in to `p6a`?** → use CLI. Read `references/cli.md`; it includes release-asset selection, checksums, platform-specific installer choices, and troubleshooting.
+4. **Are Partoska MCP tools available in this session and the work is in-session (browse, query, edit, approve, preview)?** → use MCP. Read `references/mcp.md`.
+5. **MCP tools not available and the user can install software?** → guide CLI setup, then read `references/cli.md`.
+6. **MCP tools not available and the environment cannot install/run `p6a`?** → tell the user the task isn't possible in this environment and explain why (no MCP connection, no CLI install path). Mention that they can unlock the MCP path by configuring their AI assistant to connect to the Partoska MCP server at `https://api.partoska.com/mcp/v1` (exact steps depend on the assistant — typically an "Add MCP server" or "Connectors" setting).
 
 When in doubt, prefer MCP for one-off in-session work (lower setup cost) and CLI for anything the user will run themselves.
 

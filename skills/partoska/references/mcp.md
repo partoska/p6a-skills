@@ -36,6 +36,9 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
   - `tech` — corporate events, conferences, hackathons
   - `match` — sport events and tournaments
   - `forest` — outdoor and nature-themed events
+  - `gold` — luxury and elegant occasions
+  - `romantic` — romantic events, weddings, proposals
+  - `neon` — parties and nightlife events
 - **`card-link`** — returns a one-time download URL for a full-quality card file (PDF or JPG). Use when the user needs to download or print the card. Requires `design`. This substitutes for `p6a card` only when the AI client is allowed to fetch and save files from the returned URL. For in-context card preview, use `card-gallery` instead.
 
 > **MCP Apps note.** `event-browse`, `photo-gallery`, and `card-gallery` ship as MCP App widgets and embed data inline — prefer them for browsing, navigating, and previewing. Use `event-qr-link`, `photo-link`, and `card-link` when the user explicitly needs a download URL for the file, or when the AI client can download from one-time URLs.
