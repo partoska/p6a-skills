@@ -32,5 +32,5 @@ Developed by [Partoska Laboratory](https://lab.partoska.com) team.
 ## Links
 
 - **Partoska Website:** [https://www.partoska.com](https://www.partoska.com)
-- **Project Website:** [https://lab.partoska.com/p6a](https://lab.partoska.com/p6a)
+- **Project Website:** [https://www.partoska.com/p6a](https://www.partoska.com/p6a)
 - **Partoska Command-Line Tool:** [https://github.com/partoska/p6a-cmd](https://github.com/partoska/p6a-cmd)
