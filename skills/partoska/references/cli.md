@@ -6,9 +6,26 @@ Use this reference when the task involves the `p6a` command-line tool — shell 
 
 ## Prerequisites
 
-The CLI requires installing a platform-specific binary and completing a one-time OAuth login. If the user's environment cannot run installers or open a browser, the CLI path is not viable — fall back to MCP or tell the user the task isn't possible.
+The CLI requires installing the binary and completing a one-time OAuth login. If the user's environment cannot install software or open a browser, the CLI path is not viable — fall back to MCP or tell the user the task isn't possible.
 
 ### Step 1: Install p6a
+
+#### Option A: npm (simplest — no platform-specific installer needed)
+
+```bash
+npm install -g @partoska/p6a
+```
+
+Or run without installing (useful for one-off use or environments where global installs are restricted):
+
+```bash
+npx @partoska/p6a login
+npx @partoska/p6a <command>
+```
+
+Prefer this option when the user has Node.js available — it works on macOS, Linux, and Windows without choosing a platform-specific asset.
+
+#### Option B: Platform-specific binary from GitHub Releases
 
 Download the latest release for the user's platform from GitHub:
 
@@ -206,6 +223,16 @@ p6a download -e <event-id> -m <media-id> -t ./output.jpg
 
 Files are named `IMG_0001.jpg`, `MOV_0001.mp4`, etc., sequentially from existing files.
 
+### Upload a Photo
+
+Upload a media file to an event. Prints the returned media UUID on success.
+
+```bash
+p6a upload -e <event-id> -s photo.jpg
+```
+
+On moderated events, uploaded media are created as unapproved and won't be visible to other guests until a moderator runs `p6a approve`.
+
 ### List Media in an Event
 
 ```bash
@@ -297,6 +324,15 @@ p6a list -1 | xargs -I{} sh -c 'mkdir -p ./media/{} && p6a download -e {} -t ./m
 # Find an event by name and download its media (no Bash required)
 $eventId = p6a list -q "Birthday" -1 | Select-Object -First 1
 p6a download -e $eventId -t .\photos
+```
+
+### Workflow: Upload Multiple Photos
+
+```bash
+EID=12cafe34-5b8a-4d2e-9f01-0203a4b5c6d7
+for f in *.jpg; do
+  p6a upload -e "$EID" -s "$f"
+done
 ```
 
 ### Workflow: Approve All Pending Media in a Moderated Event

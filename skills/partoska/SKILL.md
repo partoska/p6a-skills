@@ -4,7 +4,7 @@ description: Help users accomplish tasks with Partoska.com photo-sharing service
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "1.5.0"
+  version: "1.6.0"
 ---
 
 # Partoska Agent Skills
@@ -26,7 +26,7 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 
 | Approach | Best for | Setup |
 | --- | --- | --- |
-| `p6a` CLI | Shell scripts, cron jobs, CI/CD pipelines — runs anywhere, no agent required | **Requires install + login.** User must download a platform-specific installer and complete an OAuth device flow. May be impossible in sandboxed/restricted environments (no shell, no network for installer, no browser for login). |
+| `p6a` CLI | Shell scripts, cron jobs, CI/CD pipelines — runs anywhere, no agent required | **Requires install + login.** Easiest path: `npm install -g @partoska/p6a` or `npx @partoska/p6a <cmd>` (Node.js required). Alternatively, download a platform-specific binary from GitHub Releases. After install, complete a one-time OAuth device flow. May be impossible in sandboxed/restricted environments (no shell, no network, no browser for login). |
 | Partoska MCP server (`https://api.partoska.com/mcp/v1`) | In-session tasks where an agent is already running — returns structured data directly | Already connected if Partoska MCP tools (e.g. `event-query`, `photo-list`) are visible in this session. |
 
 **The key distinction is whether an agent is in the loop.** MCP tools only exist within an active agent session — shell scripts and cron jobs run outside any agent context and must use `p6a`. When an agent *is* orchestrating work, it can use MCP tools directly for cleaner structured results. If the task is to *write a script* the user will run later, always use `p6a` commands — those scripts will execute outside any agent session.
@@ -56,6 +56,7 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 
 **CLI-only (no MCP equivalent):**
 - `p6a sync` — bulk download of all events into organized subdirectories
+- `p6a upload` — photo upload; MCP has no upload tool yet
 - `p6a link` — single-purpose invite URL tool; use `event-query` or `event-browse` as a workaround via MCP
 - `p6a login` / `p6a logout` — credential management is handled outside the MCP session
 
@@ -67,7 +68,7 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 2. **Does the task require full-quality file download, `p6a sync`, or `p6a link`?** → use CLI unless the MCP `*-link` tool returns a URL and the AI client is allowed to download from it. Read `references/cli.md`.
 3. **Is the user asking how to install, download, update, verify, or log in to `p6a`?** → use CLI. Read `references/cli.md`; it includes release-asset selection, checksums, platform-specific installer choices, and troubleshooting.
 4. **Are Partoska MCP tools available in this session and the work is in-session (browse, query, edit, approve, preview)?** → use MCP. Read `references/mcp.md`.
-5. **MCP tools not available and the user can install software?** → guide CLI setup, then read `references/cli.md`.
+5. **MCP tools not available and the user can install software?** → guide CLI setup (prefer `npm install -g @partoska/p6a` or `npx @partoska/p6a` if Node.js is available), then read `references/cli.md`.
 6. **MCP tools not available and the environment cannot install/run `p6a`?** → tell the user the task isn't possible in this environment and explain why (no MCP connection, no CLI install path). Mention that they can unlock the MCP path by configuring their AI assistant to connect to the Partoska MCP server at `https://api.partoska.com/mcp/v1` (exact steps depend on the assistant — typically an "Add MCP server" or "Connectors" setting).
 
 When in doubt, prefer MCP for one-off in-session work (lower setup cost) and CLI for anything the user will run themselves.

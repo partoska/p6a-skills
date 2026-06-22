@@ -8,7 +8,7 @@ Install a skill by copying its directory into your agent skills path.
 
 ```bash
 # Interactively install skills using the `skills` npm package
-npx skills add https://github.com/partoska/p6a-skills
+npx skills add partoska/p6a-skills
 ```
 
 Then invoke it in your agent:
