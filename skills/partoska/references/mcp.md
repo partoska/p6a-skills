@@ -24,6 +24,7 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
 - **`photo-list`** — list photos for a given event. Use to enumerate before previewing or curating. Check `isApproved` to identify pending photos in a moderated event.
 - **`photo-gallery`** — fetch a single photo with full metadata: base64-encoded preview image (`data`), `previous`/`next` photo IDs for navigation, and favorite state and count. Also ships as an MCP App widget when the client supports it. Use this when the user needs to see a photo inline, navigate the gallery, or view photo metadata — it covers both interactive and data-only use cases. For a full-quality download link, use `photo-link`.
 - **`photo-link`** — returns a one-time download URL for a photo. Use when the user explicitly needs to save or download the file. Set `preview = false` (default) for the full-quality original; `preview = true` for a compressed thumbnail. This substitutes for `p6a download` only when the AI client is allowed to fetch and save files from the returned URL.
+- **`photo-picker`** — upload a photo or video to an event; also ships as an MCP App widget. When called with only `id`, returns event context (`event`, `name`, `url`, `guests`, `photos`, `allowVideo`, `quota`, `photo: null`) so the MCP App can present the upload UI. When called with `id` + `type` (`image/jpeg`, `video/mp4`, or `video/quicktime`) + `data` (base64 data URL, e.g. `data:image/jpeg;base64,...`), performs the upload and returns the new photo identifier in the `photo` field. In moderated events the upload is created as unapproved until a moderator approves it. **Prefer the MCP App widget path (call with `id` only and let the App handle the rest) over passing `data` directly whenever the client supports it** — base64-encoded photos and videos are large and will bloat the context window.
 - **`photo-favorite`** — toggle favorite on a photo.
 - **`photo-approve`** — approve a photo in a moderated event (requires moderator permission).
 
@@ -41,7 +42,7 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
   - `neon` — parties and nightlife events
 - **`card-link`** — returns a one-time download URL for a full-quality card file (PDF or JPG). Use when the user needs to download or print the card. Requires `design`. This substitutes for `p6a card` only when the AI client is allowed to fetch and save files from the returned URL. For in-context card preview, use `card-gallery` instead.
 
-> **MCP Apps note.** `event-browse`, `photo-gallery`, and `card-gallery` ship as MCP App widgets and embed data inline — prefer them for browsing, navigating, and previewing. Use `event-qr-link`, `photo-link`, and `card-link` when the user explicitly needs a download URL for the file, or when the AI client can download from one-time URLs.
+> **MCP Apps note.** `event-browse`, `photo-gallery`, `photo-picker`, and `card-gallery` ship as MCP App widgets and embed data inline — prefer them for browsing, navigating, previewing, and uploading. Use `event-qr-link`, `photo-link`, and `card-link` when the user explicitly needs a download URL for the file, or when the AI client can download from one-time URLs.
 
 ---
 

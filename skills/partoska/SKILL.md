@@ -4,7 +4,7 @@ description: Help users accomplish tasks with Partoska.com photo-sharing service
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "1.6.0"
+  version: "1.7.0"
 ---
 
 # Partoska Agent Skills
@@ -46,6 +46,7 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 | `photo-list` | `p6a media` | |
 | `photo-favorite` | `p6a edit -f/-F` | Toggle favorite on a media item |
 | `photo-approve` | `p6a approve` | Approve media in a moderated event |
+| `photo-picker` | `p6a upload` | Upload a photo or video (JPEG, MP4, QuickTime) to an event; when called with only `id` returns event context so the MCP App picker UI can render; when called with `id` + `type` + `data` performs the upload and returns the new photo ID; also an MCP App widget |
 | `photo-gallery` | `p6a media` + `p6a download` | Fetches one photo with inline base64 preview, previous/next navigation, and metadata; also an MCP App widget |
 | `photo-link` | `p6a download` (single file) | Returns a one-time download URL for a photo; equivalent only if the AI client can download from that URL |
 | `event-browse` | `p6a list` + `p6a qr` | Fetches event details with inline QR code (svg/utf8) and navigation; also an MCP App widget |
@@ -56,7 +57,6 @@ This skill makes you an expert on using [Partoska.com](https://partoska.com) —
 
 **CLI-only (no MCP equivalent):**
 - `p6a sync` — bulk download of all events into organized subdirectories
-- `p6a upload` — photo upload; MCP has no upload tool yet
 - `p6a link` — single-purpose invite URL tool; use `event-query` or `event-browse` as a workaround via MCP
 - `p6a login` / `p6a logout` — credential management is handled outside the MCP session
 
