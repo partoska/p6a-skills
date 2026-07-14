@@ -40,17 +40,21 @@ jobs:
         uses: actions/checkout@v4
       - name: Pack skills
         run: |
-          VERSION=$(grep '^  version:' skills/partoska/SKILL.md | sed 's/.*"\(.*\)"/\1/')
-          ARTIFACT="partoska_skill_v${VERSION}.zip"
-          echo "ARTIFACT=$ARTIFACT" >> "$GITHUB_ENV"
-          cd skills/partoska
-          zip -r "$GITHUB_WORKSPACE/$ARTIFACT" .
+          ARTIFACTS=""
+          for dir in skills/*/; do
+            SKILL=$(basename "$dir")
+            VERSION=$(grep '^  version:' "$dir/SKILL.md" | sed 's/.*"\(.*\)"/\1/')
+            ARTIFACT="${SKILL}_skill_v${VERSION}.zip"
+            (cd "$dir" && zip -r "$GITHUB_WORKSPACE/$ARTIFACT" .)
+            ARTIFACTS="$ARTIFACTS $GITHUB_WORKSPACE/$ARTIFACT#$ARTIFACT"
+          done
+          echo "ARTIFACTS=$ARTIFACTS" >> "$GITHUB_ENV"
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            "$GITHUB_WORKSPACE/$ARTIFACT#$ARTIFACT" \
+            $ARTIFACTS \
             --generate-notes \
             --title "$GITHUB_REF_NAME" \
             --verify-tag

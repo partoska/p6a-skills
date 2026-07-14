@@ -1,149 +1,45 @@
-# p6a CLI Reference
-
-Use this reference when the task involves the `p6a` command-line tool — shell scripts, cron jobs, CI/CD, or any in-session work where the MCP server is unavailable. See `../SKILL.md` for the CLI-vs-MCP decision.
-
+---
+name: p6a
+description: Construct p6a CLI commands and workflows for Partoska.com photo-sharing — install and login, list/create/update events, upload and moderate media, download photos in full quality, bulk sync, QR codes and share cards, shell scripts and cron jobs, and design event assets.
+license: MIT
+metadata:
+  author: Partoska Laboratory
+  version: "2.0.0"
 ---
 
-## Prerequisites
+# p6a CLI Skill
 
-The CLI requires installing the binary and completing a one-time OAuth login. If the user's environment cannot install software or open a browser, the CLI path is not viable — fall back to MCP or tell the user the task isn't possible.
+## Usage
 
-### Step 1: Install p6a
+- `/p6a` — describe what you want to do; the assistant will figure out the right command
+- `/p6a sync my photos to ~/backup` — get the exact command to run
+- `/p6a script to back up all my favorite events nightly` — get a shell script
+- `/p6a make a QR stand for event B-Day` — design an asset using event data
 
-#### Option A: npm (simplest — no platform-specific installer needed)
+## What This Skill Does
 
-```bash
-npm install -g @partoska/p6a
-```
+This skill makes you an expert on the `p6a` command-line tool for [Partoska.com](https://partoska.com) — a photo-sharing service for events. `p6a` runs anywhere a shell runs — interactive terminals, shell scripts, cron jobs, CI/CD pipelines — and covers authentication, event management, media upload/download/moderation, full-quality bulk sync, and sharing via invite links, QR codes, and printable cards.
 
-Or run without installing (useful for one-off use or environments where global installs are restricted):
+## Setup
 
-```bash
-npx @partoska/p6a login
-npx @partoska/p6a <command>
-```
+`p6a` requires a one-time install and OAuth login. When the user asks how to install, download, update, verify, or log in — or a command fails with `p6a: command not found` or an auth error — read `references/install.md`; it covers npm and platform-specific installers, release-asset selection, checksums, the login flow, and troubleshooting. If the user's environment cannot install software or open a browser for login, the task isn't possible with `p6a` in that environment — say so rather than improvising.
 
-Prefer this option when the user has Node.js available — it works on macOS, Linux, and Windows without choosing a platform-specific asset.
-
-#### Option B: Platform-specific binary from GitHub Releases
-
-Download the latest release for the user's platform from GitHub:
-
-**[https://github.com/partoska/p6a-cmd/releases](https://github.com/partoska/p6a-cmd/releases)**
-
-If network access is available and the user wants exact commands, resolve the latest release via the GitHub Releases API instead of inventing versioned URLs:
+Quick sanity check on an already-set-up machine:
 
 ```bash
-curl -L https://api.github.com/repos/partoska/p6a-cmd/releases/latest
+p6a version   # binary installed and on PATH
+p6a list      # credentials valid — prints accessible events
 ```
 
-Select the installer from `assets[].name`, use its `browser_download_url`, and verify against its `digest` when possible. Do **not** hard-code a version or construct a release URL by guessing.
+## Design Tasks
 
-#### Choose the right asset
-
-| Platform | Preferred interactive install | Portable/headless fallback |
-| --- | --- | --- |
-| macOS | `p6a_<version>_darwin_universal.pkg` | `p6a_<version>_darwin_universal.tar.gz` or bare `p6a_<version>_darwin_universal` |
-| Debian/Ubuntu amd64 | `p6a_<version>_linux_amd64.deb` | `p6a_<version>_linux_amd64.tar.gz` or bare `p6a_<version>_linux_amd64` |
-| Debian/Ubuntu arm64 | `p6a_<version>_linux_arm64.deb` | `p6a_<version>_linux_arm64.tar.gz` or bare `p6a_<version>_linux_arm64` |
-| Fedora/RHEL amd64 | `p6a_<version>_linux_amd64.rpm` | `p6a_<version>_linux_amd64.tar.gz` or bare `p6a_<version>_linux_amd64` |
-| Fedora/RHEL arm64 | `p6a_<version>_linux_arm64.rpm` | `p6a_<version>_linux_arm64.tar.gz` or bare `p6a_<version>_linux_arm64` |
-| Windows amd64 | `p6a_<version>_windows_amd64_setup.exe` | `.msi`, `.zip`, or bare `p6a_<version>_windows_amd64.exe` |
-| Windows arm64 | `p6a_<version>_windows_arm64_setup.exe` | `.msi`, `.zip`, or bare `p6a_<version>_windows_arm64.exe` |
-
-Use `uname -s` for OS and `uname -m` for CPU architecture. Map `x86_64` to `amd64`; map `aarch64` or `arm64` to `arm64`. On Linux, inspect `/etc/os-release` to choose `.deb` for Debian/Ubuntu-family systems and `.rpm` for Fedora/RHEL-family systems.
-
-#### Install examples
-
-Window package:
-
-```bat
-p6a_<version>_windows_amd64_setup.exe
-```
-
-macOS package:
-
-```bash
-sudo installer -pkg ./p6a_<version>_darwin_universal.pkg -target /
-```
-
-Debian/Ubuntu:
-
-```bash
-sudo apt install ./p6a_<version>_linux_amd64.deb
-```
-
-Fedora/RHEL:
-
-```bash
-sudo dnf install ./p6a_<version>_linux_amd64.rpm
-```
-
-Portable Linux/macOS tarball:
-
-```bash
-tar -xzf ./p6a_<version>_<platform>.tar.gz
-chmod +x ./p6a
-mkdir -p ~/.local/bin
-mv ./p6a ~/.local/bin/p6a
-```
-
-Portable bare binary:
-
-```bash
-chmod +x ./p6a_<version>_<platform>
-mkdir -p ~/.local/bin
-mv ./p6a_<version>_<platform> ~/.local/bin/p6a
-```
-
-Make sure `~/.local/bin` is on `PATH` when using portable installs.
-
-#### Verify downloaded assets
-
-When the release API provides a `digest` such as `sha256:<hex>`, verify the downloaded file before installing:
-
-```bash
-shasum -a 256 ./p6a_<version>_<platform>.<ext>
-```
-
-Compare the output hash to the asset digest from the release API.
-
-> **Windows note:** The shell examples in this reference use Bash syntax. On Windows, use PowerShell or `.bat` equivalents unless you are running inside MSYS2, Git Bash, Cygwin, or WSL — in those environments the Bash examples work as-is.
-
-Verify the install:
-
-```bash
-p6a version
-```
-
-### Step 2: Log in
-
-```bash
-p6a login
-```
-
-This starts an OAuth device flow — follow the prompt to authorize in a browser. Credentials are saved to `~/.p6a/` and reused automatically. To use a custom config directory instead of `~/.p6a/`, pass `-D <path>` to any command (e.g. `p6a login -D ~/work/.p6a`).
-
-Verify the connection:
-
-```bash
-p6a list
-```
-
-> If events are listed, the setup is complete. If `p6a` is not found, check that the binary is on `PATH`.
-
-### Install Troubleshooting
-
-- `p6a: command not found`: open a new terminal, verify the installer updated `PATH`, or use the full path to the binary.
-- Portable install still not found: add the install directory (for example `~/.local/bin`) to `PATH`.
-- macOS blocks the binary or package: prefer the `.pkg` installer; if macOS still blocks execution, use the Security & Privacy prompt in System Settings to allow it.
-- Linux package install fails for permissions: run the package manager command with `sudo`, or use the portable tarball in a user-owned directory.
-- Linux package format is wrong: use `.deb` for Debian/Ubuntu-family systems and `.rpm` for Fedora/RHEL-family systems.
-- Windows terminal cannot find `p6a`: close and reopen the terminal after install; if needed, use the full install path or rerun the setup installer.
+Partoska users frequently ask for design assets tied to their events — **QR stands**, **posters**, **tickets**, **invitations**, **static HTML pages**, **slideshow slides**, and photo-driven pieces like **collages** or **photo recaps**. When the user requests any of these, **load `references/design.md` first** before producing anything. It covers vibe inference from event metadata, asset-specific conventions (what should dominate, what to ask about, when *not* to promote Partoska), and how to incorporate full-quality event photos via `p6a download`.
 
 ---
 
 ## Command Reference
+
+> **Windows note:** The shell examples below use Bash syntax. On Windows, use PowerShell or `.bat` equivalents unless you are running inside MSYS2, Git Bash, Cygwin, or WSL — in those environments the Bash examples work as-is.
 
 ### Authentication
 
@@ -261,15 +157,25 @@ p6a card -e <event-id> -d bday                   # Birthday/anniversary theme (P
 p6a card -e <event-id> -d tech                   # Corporate/conference theme (PDF)
 p6a card -e <event-id> -d match                  # Sport/tournament theme (PDF)
 p6a card -e <event-id> -d forest                 # Outdoor/nature theme (PDF)
+p6a card -e <event-id> -d garden                 # Garden/floral theme (PDF)
 p6a card -e <event-id> -d gold                   # Luxury/elegant theme (PDF)
 p6a card -e <event-id> -d romantic               # Romantic/wedding theme (PDF)
+p6a card -e <event-id> -d silver                 # Cool/modern elegant theme (PDF)
 p6a card -e <event-id> -d neon                   # Party/nightlife theme (PDF)
+p6a card -e <event-id> -d nineties               # Retro/1990s theme (PDF)
 
 p6a card -e <event-id> -d bday -F jpg            # JPEG instead of PDF
 p6a card -e <event-id> -d bday -t card.pdf       # Custom output file
 p6a card -e <event-id> -d tech -b                # White background (no-background mode)
-p6a card -e <event-id> -d bday -l cs -p A4       # Czech locale, A4 paper
+p6a card -e <event-id> -d bday -l de -p A4       # German locale, A4 paper
 ```
+
+### Key Flags Available on All Commands
+
+| Flag               | Description                                       |
+| ------------------ | ------------------------------------------------- |
+| `-D, --dir <path>` | Use a custom config directory (default: `~/.p6a`) |
+| `-h, --help`       | Show command help                                 |
 
 ---
 
@@ -352,15 +258,6 @@ EVENT_ID=$(p6a list -q "Birthday" -1 | head -1)
 p6a qr -e "$EVENT_ID" -t birthday-qr.png
 p6a link -e "$EVENT_ID"
 ```
-
----
-
-## Key Flags Available on All Commands
-
-| Flag               | Description                                       |
-| ------------------ | ------------------------------------------------- |
-| `-D, --dir <path>` | Use a custom config directory (default: `~/.p6a`) |
-| `-h, --help`       | Show command help                                 |
 
 ---
 

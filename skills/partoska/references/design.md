@@ -1,8 +1,18 @@
 # Partoska Design Reference
 
-Use this reference when the user asks you to design an asset tied to a Partoska event — typically a **QR stand**, **poster**, **ticket**, **invitation**, **static HTML page**, or **slideshow slide** for a projector/TV. See `../SKILL.md` for the broader CLI-vs-MCP routing.
+Use this reference when the user asks you to design an asset tied to a Partoska event — typically a **QR stand**, **poster**, **ticket**, **invitation**, **static HTML page**, or **slideshow slide** for a projector/TV. Photo-driven assets — **photo posters, collages, photo recaps/summaries** — are better served by the p6a CLI; see "What You Can Deliver from a Chat Session" below.
 
 The job is two-sided: (1) understand the event well enough to design *for* it, not generically; (2) follow the conventions for the specific asset type.
+
+---
+
+## What You Can Deliver from a Chat Session
+
+Design work over MCP is real, but sharply tiered by whether the asset needs real photos:
+
+- **QR-only assets are the in-session sweet spot.** QR stands, static HTML pages, slideshow slides, invitations, and tickets need typography, color, and the event QR — nothing else. The QR arrives as inline SVG via `event-browse`, so you can author polished SVG and self-contained HTML deliverables entirely in-session. Raster and document output (PNG, PDF, PPTX) additionally depends on the client — use whatever the session provides (artifacts/canvas, image generation, file-creation or code-execution tools, other connected MCP servers); when nothing suitable exists, deliver SVG or HTML and tell the user how to convert (e.g. print-to-PDF from a browser).
+- **Built-in share cards shine as MCP Apps.** When the client supports MCP App widgets, present the pre-built designs through the interactive `card-gallery` widget so the user can browse themes visually before committing (see the next section).
+- **Photo-driven assets belong to the p6a CLI.** Photo posters, collages, and photo recaps/summaries are built from full-quality originals, and inline photo data will not fit the context in major clients — Claude and ChatGPT both struggle with large base64 payloads. Don't attempt them in-session: design the photo-free variant when one makes sense, and otherwise route the user to the p6a workflow (see Step 2).
 
 ---
 
@@ -12,25 +22,23 @@ Partoska ships **built-in share card designs** — printable cards with an event
 
 > **Important**: these cards serve one specific purpose — prompting guests to scan a QR code and upload photos to the event. They are **not** general-purpose design assets. For posters, tickets, invitations, slides, HTML pages, or anything beyond a photo-upload card, always produce a fully custom design (Steps 1–4 below).
 
-Available via `p6a card -e <event-id> -d <design>` (CLI) or `card-gallery` / `card-link` (MCP):
-
 | Design | Best for |
 | --- | --- |
 | `bday` | Birthday parties, anniversary celebrations |
 | `tech` | Corporate events, conferences, hackathons, tech meetups |
 | `match` | Sport events, tournaments, competitions |
 | `forest` | Outdoor events, nature-themed gatherings, school trips |
+| `garden` | Garden parties, spring celebrations, floral events |
 | `gold` | Luxury and elegant occasions |
 | `romantic` | Romantic events, weddings, proposals |
+| `silver` | Elegant occasions with a cool, modern look |
 | `neon` | Parties and nightlife events |
+| `nineties` | Retro parties and 1990s-themed events |
 
-**CLI** — `p6a card -e <event-id> -d <design>`:
-- `-F jpg` for JPEG output (default: PDF)
-- Optional: `-l <locale>`, `-L <layout>`, `-p <paper>`, `-b/--no-background`
+Two tools, depending on the use case:
 
-**MCP** — two tools, depending on the use case:
-- `card-gallery` — previews the card as an inline base64 JPEG (also an MCP App widget). Pass `design` (required) and optionally `locale`, `layout`, `paper`, `background`. Use for in-context preview.
-- `card-link` — returns a one-time download URL for the full-quality PDF or JPEG. Use when the user needs to download or print the file. It substitutes for `p6a card` only when the AI client is allowed to fetch and save files from that URL.
+- **`card-gallery`** — previews the card. **When the client supports MCP Apps, prefer the widget path** — it renders the card interactively so the user can browse designs visually before committing, which beats describing themes in text. Without widget support it still returns an inline base64 JPEG preview. Pass `design` (required) and optionally `locale`, `layout`, `paper`, `background`.
+- **`card-link`** — returns a one-time download URL for the full-quality PDF or JPEG. Use when the user needs to download or print the file; if the AI client cannot fetch and save from the URL, hand it to the user to open.
 
 **When the user asks for a photo-upload card or QR card**, recommend the matching built-in design before offering a custom one. For any other asset type, skip this section entirely and go straight to Step 1.
 
@@ -44,7 +52,7 @@ Before designing anything, gather the minimum context:
 - **Date(s)** — anchors the season, day-of-week feel, and whether dates should appear on the asset.
 - **Optional info / description** — venue, audience, theme, dress code.
 
-If the event already exists in Partoska, fetch it (`event-query` / `p6a list -q`) rather than asking the user to retype what's already on file.
+If the event already exists in Partoska, fetch it (`event-query`) rather than asking the user to retype what's already on file.
 
 ### Inferring the Vibe
 
@@ -71,28 +79,25 @@ The vibe drives typography, palette, and tone:
 
 ---
 
-## Step 2: Consider Using Event Photos
+## Step 2: Photos — Default to None In-Session
 
-For *any* asset type, ask yourself whether a real photo from the event would make the design stronger.
+For the assets you design in-session (QR stand, invitation, ticket, slide, HTML page, photo-free poster), the default is a **photo-free design** — typography, color, and motif carry the vibe. Don't pull photo data into context unless it genuinely changes the outcome.
 
-**Posters benefit most** from real photos — a single hero image carries an enormous amount of vibe with no design effort. Tickets and invitations can use photos but it's optional. QR stands usually do *not* need a photo — they lean minimal and the QR itself is the focal point.
+When a photo would help:
 
-### When the event already has photos
+### Previews to inform, sparingly
 
-1. List photos with `photo-list` (MCP) or `p6a media -e <event>` (CLI).
-2. Prefer the **most-favorited** ones — they're already validated as visually strong.
-3. Inspect candidates with `photo-gallery` (returns inline base64 preview, supports previous/next navigation) or by downloading a few with `p6a download` (CLI).
-4. Offer 1–3 thematically appropriate options to the user; let them pick.
+1. List photos with `photo-list`. Prefer the **most-favorited** ones — they're already validated as visually strong.
+2. Fetch at most 1–3 candidates with `photo-gallery`. Previews are compressed base64 images and cost context — never bulk-fetch a gallery to "look around."
+3. Use the previews to let the user pick a candidate and to inform palette, mood, and composition — a preview is good enough to design *around* even when you can't embed the original.
+
+### Embedding full quality: hand off to p6a
+
+`photo-gallery` previews are not embedding quality, and the one-time URLs from `photo-link` expire after a single use — never hard-code one into a deliverable. If the user wants real photos *in* the deliverable — a photo poster, collage, or recap — that's a p6a task: point them to `p6a download -e <event-id> -t <dir>` (or `-m <media-id>` for one file). If it helps, still deliver the design in-session as a template with clearly marked photo placeholders they can fill.
 
 ### When the event is new, empty, or has no relevant photos
 
-Skip this step entirely. Don't ask the user to upload photos just to seed your design — design something thematic on your own.
-
-### MCP caveat — full-quality photos are CLI-only
-
-`photo-gallery` returns a **compressed preview** suitable for *picking* a thematic candidate, not for embedding in a final deliverable. `photo-link` gives a one-time download URL; use it as a substitute for `p6a download` only when the AI client is allowed to fetch and save files from that URL. In MCP-only sessions without that capability, default to **skipping the photo step**. If the user really wants a specific photo in the design, point them to `p6a download -e <event-id> -m <media-id> -t <path>` to fetch the full file themselves, then incorporate it.
-
-In CLI-driven sessions where you (or the user) can run `p6a download`, full-quality embedding is straightforward.
+Skip photos entirely. Don't ask the user to upload photos just to seed your design — design something thematic on your own.
 
 ---
 
@@ -111,7 +116,7 @@ A small printed sign (typically table-card or A5/A6) inviting guests to upload t
   - Match language to the event's locale.
 - **Photo contest hook** (e.g. "Best photo wins X"): **ask the user first** before adding this. Never invent prizes unprompted — the host needs to actually deliver on whatever you put on the sign.
 - **Photos**: usually unnecessary on a QR stand. Offer only if the user asks.
-- Get the QR via `event-browse` (inline svg/utf8, also an MCP App) or `event-qr-link` (one-time download URL for PNG/SVG/UTF-8) in MCP, or `p6a qr -e <event-id>` in CLI. Use `event-qr-link` as a file-producing substitute only when the AI client can download from the returned URL.
+- Get the QR via `event-browse` — the inline `svg` format embeds directly into an SVG or HTML deliverable (also an MCP App widget); `utf8` renders in a code block. Use `event-qr-link` when the user needs a standalone QR file (one-time download URL for PNG/SVG/UTF-8).
 
 ### Poster
 
@@ -120,7 +125,7 @@ Larger-format announcement (A3/A2 typical) for display before or during the even
 - **Event name dominates** — it's the single largest element.
 - **Ask** whether to include start/end date (and time). Posters before the event almost always want dates; posters at the venue may not.
 - **QR is secondary** — present so guests can scan, but small relative to the name and imagery. Unless the user explicitly asks for a QR-prominent poster.
-- **Photos are the highest-leverage addition here** — see Step 2. Offer if available.
+- **A typography-led thematic poster is achievable in-session.** Real photos are the highest-leverage addition, but they turn the poster into a p6a task — see Step 2.
 - Style follows the inferred vibe.
 
 ### Ticket
@@ -148,8 +153,8 @@ A self-contained page intended to be displayed on a screen (projector, TV, lobby
 
 - **Aspect ratio matters** — ask whether the target is 16:9 (most TVs/projectors), 9:16 (vertical signage), or browser-flexible. Design accordingly.
 - **Event name dominates**, similar to a poster.
-- **QR is prominent** when the page is meant for live scanning by guests in the room — large enough to scan from the back row.
-- **Photos work very well here** — see Step 2. A rotating gallery or hero photo can fill the screen.
+- **QR is prominent** when the page is meant for live scanning by guests in the room — large enough to scan from the back row. Embed the SVG QR from `event-browse` inline; never reference a one-time URL from the page.
+- **Photos work very well here** — but a photo-filled page (rotating gallery, hero photo) is a p6a task; see Step 2. In-session, deliver the page with marked photo placeholders or design it QR-and-typography-first.
 - Keep CSS self-contained and avoid external font/image dependencies unless the user is hosting it somewhere with internet access.
 
 ### Slideshow Slide
@@ -167,24 +172,16 @@ A single slide for insertion into an existing PPT/Keynote/Google Slides deck —
 ## Step 4: Confirm and Deliver
 
 - When in doubt about tone (formal vs. playful, minimal vs. ornate), confirm with the user before finalizing.
-- **Ask about the output format** before producing the final deliverable. Common options:
-  - **PDF** — print-ready, vector-preserving, the default for posters / tickets / invitations / QR stands.
-  - **PNG / JPG** — raster, good for sharing digitally or embedding in messages.
-  - **SVG** — scalable, editable; useful when the user wants to tweak the design themselves.
-  - **HTML** — for the static-page asset type, or when the user wants something they can host / open in a browser.
-  - **PPTX / Word (DOCX)** — when the user wants to drop the asset into an existing deck or document.
+- **Ask about the output format** before producing the final deliverable, and offer only formats the session can actually produce (see "What You Can Deliver from a Chat Session" above). Common options:
+  - **SVG** — scalable, editable, always producible in chat; useful when the user wants to tweak the design themselves.
+  - **HTML** — for the static-page asset type, or when the user wants something they can host / open in a browser; also always producible.
+  - **PDF** — print-ready, vector-preserving, the natural default for posters / tickets / invitations / QR stands — when the client has a file-producing capability. Otherwise deliver SVG/HTML and suggest print-to-PDF from a browser.
+  - **PNG / JPG** — raster, good for sharing digitally; requires a rendering capability in the client (image generation, code execution).
+  - **PPTX / Word (DOCX)** — when the user wants to drop the asset into an existing deck or document; requires a file-producing capability.
 - If you produced multiple variants, label them clearly so the user can pick.
 
 ---
 
 ## Language Notes
 
-Match the language on the asset to the event's locale (event name and any user-provided info are the strongest signal). Below are language-specific conventions worth following. If unsure about language, ask user.
-
-### Czech
-
-When designing in Czech:
-
-- **Use "fotky" for photos**, not "vzpomínky" ("memories"). "Vzpomínky" reads as overwrought / sentimental in this context — "fotky" is the natural everyday word people use.
-- Keep calls to action conversational and warm, e.g. *"Pomoz nám zachytit tenhle den — nahraj svoje fotky."* Avoid stiff or formal phrasing unless the event itself is formal.
-- Address guests informally (tykání) by default for weddings, family events, parties; use formal address (vykání) for corporate, conferences, and formal occasions.
+Match the language on the asset to the event's locale — the event name and any user-provided info are the strongest signal. If unsure about the language, ask the user. In any language, keep calls to action conversational and warm, using the natural everyday register rather than overwrought or sentimental wording; reserve formal address and stiff phrasing for corporate, conference, and formal occasions.
