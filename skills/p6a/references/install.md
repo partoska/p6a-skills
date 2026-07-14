@@ -6,7 +6,15 @@ The CLI requires installing the binary and completing a one-time OAuth login. If
 
 ## Step 1: Install p6a
 
-### Option A: npm (simplest — no platform-specific installer needed)
+### Option A: Package manager (recommended)
+
+Homebrew on macOS or Linux:
+
+```bash
+brew install partoska/tap/p6a
+```
+
+npm on macOS, Linux, or Windows:
 
 ```bash
 npm install -g @partoska/p6a
@@ -19,7 +27,14 @@ npx @partoska/p6a login
 npx @partoska/p6a <command>
 ```
 
-Prefer this option when the user has Node.js available — it works on macOS, Linux, and Windows without choosing a platform-specific asset.
+Prefer npm when the user has Node.js available — it works on macOS, Linux, and Windows without choosing a platform-specific asset.
+
+Scoop on Windows:
+
+```powershell
+scoop bucket add partoska https://github.com/partoska/scoop-bucket
+scoop install p6a
+```
 
 ### Option B: Platform-specific binary from GitHub Releases
 
@@ -118,7 +133,7 @@ p6a version
 p6a login
 ```
 
-This starts an OAuth device flow — follow the prompt to authorize in a browser. Credentials are saved to `~/.p6a/` and reused automatically. To use a custom config directory instead of `~/.p6a/`, pass `-D <path>` to any command (e.g. `p6a login -D ~/work/.p6a`).
+This starts an OAuth device flow — follow the prompt to authorize in a browser. Credentials are saved to `~/.p6a/` and reused automatically. To use a custom config directory instead of `~/.p6a/`, pass `-D <path>` to commands that support it (e.g. `p6a login -D ~/work/.p6a`).
 
 Verify the connection:
 

@@ -4,7 +4,7 @@ description: Construct p6a CLI commands and workflows for Partoska.com photo-sha
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # p6a CLI Skill
@@ -167,15 +167,17 @@ p6a card -e <event-id> -d nineties               # Retro/1990s theme (PDF)
 p6a card -e <event-id> -d bday -F jpg            # JPEG instead of PDF
 p6a card -e <event-id> -d bday -t card.pdf       # Custom output file
 p6a card -e <event-id> -d tech -b                # White background (no-background mode)
-p6a card -e <event-id> -d bday -l de -p A4       # German locale, A4 paper
+p6a card -e <event-id> -d forest -l cs -L business -p letter  # Czech, tiled layout
 ```
 
-### Key Flags Available on All Commands
+Supported card options are locale `en` (default) or `cs`, layout `single` (default) or `business`, and paper size `a4` (default) or `letter`. Downloading a share card requires organizer (admin) access.
 
-| Flag               | Description                                       |
-| ------------------ | ------------------------------------------------- |
-| `-D, --dir <path>` | Use a custom config directory (default: `~/.p6a`) |
-| `-h, --help`       | Show command help                                 |
+### Global Help and Configuration
+
+| Invocation                       | Description                                                                 |
+| -------------------------------- | --------------------------------------------------------------------------- |
+| `-D, --dir <path>`               | Use a custom config directory on supported commands (default: `~/.p6a`)     |
+| `p6a help`, `p6a -h`, `p6a --help` | Show top-level command help                                                |
 
 ---
 

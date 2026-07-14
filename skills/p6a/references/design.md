@@ -30,7 +30,8 @@ Available via `p6a card -e <event-id> -d <design>`:
 Useful flags:
 
 - `-F jpg` for JPEG output (default: PDF)
-- Optional: `-l <locale>`, `-L <layout>`, `-p <paper>`, `-b/--no-background`
+- Optional: `-l en|cs`, `-L single|business`, `-p a4|letter`, `-b/--no-background`
+- Downloading a share card requires organizer (admin) access.
 
 **When the user asks for a photo-upload card or QR card**, recommend the matching built-in design before offering a custom one. For any other asset type, skip this section entirely and go straight to Step 1.
 

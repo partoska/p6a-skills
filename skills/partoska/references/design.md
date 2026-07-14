@@ -37,8 +37,10 @@ Partoska ships **built-in share card designs** — printable cards with an event
 
 Two tools, depending on the use case:
 
-- **`card-gallery`** — previews the card. **When the client supports MCP Apps, prefer the widget path** — it renders the card interactively so the user can browse designs visually before committing, which beats describing themes in text. Without widget support it still returns an inline base64 JPEG preview. Pass `design` (required) and optionally `locale`, `layout`, `paper`, `background`.
+- **`card-gallery`** — opens the interactive card gallery. **Call it once with a starting design and omit `includeData` (or leave it `false`)** — the user browses themes inside the MCP App while the widget fetches preview binaries outside model context. Do not loop over designs with repeated tool calls.
 - **`card-link`** — returns a one-time download URL for the full-quality PDF or JPEG. Use when the user needs to download or print the file; if the AI client cannot fetch and save from the URL, hand it to the user to open.
+
+Both tools require event admin access and `design`. Optional values are `locale` (`en` or `cs`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`; `card-link` additionally accepts `format` (`pdf` or `jpg`).
 
 **When the user asks for a photo-upload card or QR card**, recommend the matching built-in design before offering a custom one. For any other asset type, skip this section entirely and go straight to Step 1.
 
@@ -88,8 +90,8 @@ When a photo would help:
 ### Previews to inform, sparingly
 
 1. List photos with `photo-list`. Prefer the **most-favorited** ones — they're already validated as visually strong.
-2. Fetch at most 1–3 candidates with `photo-gallery`. Previews are compressed base64 images and cost context — never bulk-fetch a gallery to "look around."
-3. Use the previews to let the user pick a candidate and to inform palette, mood, and composition — a preview is good enough to design *around* even when you can't embed the original.
+2. Open `photo-gallery` once with a starting item, omitting `includeData` (or leaving it `false`). Let the user browse candidates inside the MCP App; do not fetch each preview through separate tool calls.
+3. Continue after the user selects a candidate in the widget, using their selection and the event metadata to guide palette, mood, and composition.
 
 ### Embedding full quality: hand off to p6a
 

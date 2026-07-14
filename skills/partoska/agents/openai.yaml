@@ -1,0 +1,14 @@
+interface:
+  display_name: "Partoska"
+  short_description: "Manage Partoska events and photos through MCP"
+  icon_small: "./assets/logo.svg"
+  icon_large: "./assets/logo.png"
+  default_prompt: "Use $partoska to manage my event, browse photos, or create a sharing asset."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "partoska"
+      description: "Partoska event and photo management tools"
+      transport: "streamable_http"
+      url: "https://api.partoska.com/mcp/v1"
