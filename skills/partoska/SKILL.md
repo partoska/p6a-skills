@@ -4,7 +4,7 @@ description: Help users manage Partoska.com photo-sharing events through the Par
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "2.1.0"
+  version: "2.1.1"
 ---
 
 # Partoska Skill
@@ -48,11 +48,15 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
 - **`photo-favorite`** — toggle favorite on a photo.
 - **`photo-approve`** — approve a photo in a moderated event (requires moderator permission).
 
+> **Photo access note.** `photo-list`, `photo-gallery`, `photo-picker`, and `photo-link` need guest access on a public event, and contributor access on a non-public one.
+
+> **Quota note.** The `quota` returned by `photo-picker` is the event's *remaining* upload capacity in bytes, not a fixed ceiling. 
+
 ### Sharing
 
 - **`event-browse`** — fetch event details with an inline QR code. Returns the `qrCode` field in the requested `format` (`svg` or `utf8`), plus `url`, favorite state, and `previous`/`next` event IDs for navigation. Also ships as an MCP App widget when the client supports it. Use this when the user wants event details, an inline QR preview, or event navigation. For SVG, save the content to a file (or embed it in an SVG/HTML deliverable) before presenting; for UTF-8, render it directly in a code block.
 - **`event-qr-link`** — returns a one-time download URL for a full-quality QR code file (PNG, SVG, or UTF-8). Use when the user needs to download or save the QR file. For in-context QR preview, use `event-browse` instead.
-- **`card-gallery`** — open the interactive share-card gallery. These are **pre-built themed cards** containing the event's QR code, intended to prompt guests to upload photos — not general-purpose design assets. Call it once with a starting design, omit `includeData` (or leave it `false`), and let the user browse designs through the MCP App; the widget fetches preview binaries without loading them into model context. Requires event admin access and `design`; optional values are `locale` (`en` or `cs`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`.
+- **`card-gallery`** — open the interactive share-card gallery. These are **pre-built themed cards** containing the event's QR code, intended to prompt guests to upload photos — not general-purpose design assets. Call it once with a starting design, omit `includeData` (or leave it `false`), and let the user browse designs through the MCP App; the widget fetches preview binaries without loading them into model context. Requires event admin access and `design`; optional values are `locale` (`en`, `cs`, `sk`, `pl`, `ru`, or `es`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`.
   - `bday` — birthday parties and anniversaries
   - `tech` — corporate events, conferences, hackathons
   - `match` — sport events and tournaments
@@ -63,6 +67,7 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
   - `silver` — elegant occasions with a cool, modern look
   - `neon` — parties and nightlife events
   - `nineties` — retro parties and 1990s-themed events
+  - `cottage` — cottage getaways, cabin weekends, countryside retreats
 - **`card-link`** — returns a one-time download URL for a full-quality card file. Requires event admin access and `design`; accepts `format` (`pdf` or `jpg`) plus the same locale, layout, paper, and background options as `card-gallery`. Use when the user needs to download or print the card. For an in-context preview, use `card-gallery` instead.
 
 > **MCP Apps note.** `event-browse`, `photo-gallery`, `photo-picker`, and `card-gallery` ship as MCP App widgets — prefer them for browsing, navigating, previewing, and uploading. Open a gallery once, keep `includeData` omitted or `false`, and let the user browse inside the App; do not loop over gallery items with repeated tool calls. Use `event-qr-link`, `photo-link`, and `card-link` when the user explicitly needs a download URL for the file.

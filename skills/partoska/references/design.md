@@ -34,13 +34,14 @@ Partoska ships **built-in share card designs** — printable cards with an event
 | `silver` | Elegant occasions with a cool, modern look |
 | `neon` | Parties and nightlife events |
 | `nineties` | Retro parties and 1990s-themed events |
+| `cottage` | Cottage getaways, cabin weekends, countryside retreats |
 
 Two tools, depending on the use case:
 
 - **`card-gallery`** — opens the interactive card gallery. **Call it once with a starting design and omit `includeData` (or leave it `false`)** — the user browses themes inside the MCP App while the widget fetches preview binaries outside model context. Do not loop over designs with repeated tool calls.
 - **`card-link`** — returns a one-time download URL for the full-quality PDF or JPEG. Use when the user needs to download or print the file; if the AI client cannot fetch and save from the URL, hand it to the user to open.
 
-Both tools require event admin access and `design`. Optional values are `locale` (`en` or `cs`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`; `card-link` additionally accepts `format` (`pdf` or `jpg`).
+Both tools require event admin access and `design`. Optional values are `locale` (`en`, `cs`, `sk`, `pl`, `ru`, or `es`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`; `card-link` additionally accepts `format` (`pdf` or `jpg`).
 
 **When the user asks for a photo-upload card or QR card**, recommend the matching built-in design before offering a custom one. For any other asset type, skip this section entirely and go straight to Step 1.
 
