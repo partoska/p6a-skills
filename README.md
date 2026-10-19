@@ -6,7 +6,7 @@ A collection of agent skills for [Partoska.com](https://partoska.com), a photo-s
 
 ### `partoska` (MCP)
 
-Manage Partoska events in-session through the Partoska MCP server: find and create events, browse, upload, and curate photos, approve moderated uploads, share via invite links, QR codes, and printable cards, and design event assets.
+Manage Partoska events in-session through the Partoska MCP server: find and create events, browse, upload, and curate photos, approve moderated uploads or revoke an approval, share via invite links, QR codes, and printable cards, and design event assets.
 
 ## Installation
 

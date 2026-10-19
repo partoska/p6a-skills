@@ -18,6 +18,7 @@ metadata:
 - `/partoska make a collage from the best photos of the BBQ`
 - `/partoska download the favorite photos from Anna's wedding`
 - `/partoska moderate the pending photos at the company party — nothing with drinks or logos`
+- `/partoska revoke approval of the photo with the receipt at the gala`
 - `/partoska favorite the 10 best photos from the BBQ`
 - `/partoska make the wedding public — check the photos first`
 - `/partoska find the cake cutting photos from Ella's party`
