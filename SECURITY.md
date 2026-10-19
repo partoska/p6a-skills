@@ -19,9 +19,9 @@ Use [GitHub's private vulnerability reporting](https://github.com/partoska/p6a-s
 This repository contains agent skill definitions with no compiled code, no server, and no dependency tree. The attack surface is limited to:
 
 - Prompt injection via malicious skill content loaded into an agent
-- Misleading command examples that could cause data loss or unintended `p6a` operations
+- Misleading instructions that could lead an agent into unintended Partoska actions, such as making a private event public or approving photos the user would reject
 
 ## Out of Scope
 
-- Vulnerabilities in the `p6a` CLI itself. Report those to the [p6a-cmd](https://github.com/partoska/p6a-cmd) repository.
+- Vulnerabilities in the Partoska service or its MCP server. Report those to Partoska directly.
 - Vulnerabilities in your agentic platform. Report those to your vendor.

@@ -1,6 +1,0 @@
-interface:
-  display_name: "p6a"
-  short_description: "Manage Partoska events and photos through p6a command-line tool"
-  icon_small: "./assets/logo.svg"
-  icon_large: "./assets/logo.png"
-  default_prompt: "Use $p6a to construct the exact command or workflow for my Partoska task."

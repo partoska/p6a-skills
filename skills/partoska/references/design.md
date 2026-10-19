@@ -1,6 +1,6 @@
 # Partoska Design Reference
 
-Use this reference when the user asks you to design an asset tied to a Partoska event — typically a **QR stand**, **poster**, **ticket**, **invitation**, **static HTML page**, or **slideshow slide** for a projector/TV. Photo-driven assets — **photo posters, collages, photo recaps/summaries** — are better served by the p6a CLI; see "What You Can Deliver from a Chat Session" below.
+Use this reference when the user asks you to design an asset tied to a Partoska event — typically a **QR stand**, **poster**, **ticket**, **invitation**, **static HTML page**, **slideshow slide** for a projector/TV, or a photo-driven piece like a **collage**, **photo recap**, or chronological **recap story**.
 
 The job is two-sided: (1) understand the event well enough to design *for* it, not generically; (2) follow the conventions for the specific asset type.
 
@@ -8,11 +8,11 @@ The job is two-sided: (1) understand the event well enough to design *for* it, n
 
 ## What You Can Deliver from a Chat Session
 
-Design work over MCP is real, but sharply tiered by whether the asset needs real photos:
+Design work over MCP is real; what you can produce depends on the asset and on the client's capabilities:
 
-- **QR-only assets are the in-session sweet spot.** QR stands, static HTML pages, slideshow slides, invitations, and tickets need typography, color, and the event QR — nothing else. The QR arrives as inline SVG via `event-browse`, so you can author polished SVG and self-contained HTML deliverables entirely in-session. Raster and document output (PNG, PDF, PPTX) additionally depends on the client — use whatever the session provides (artifacts/canvas, image generation, file-creation or code-execution tools, other connected MCP servers); when nothing suitable exists, deliver SVG or HTML and tell the user how to convert (e.g. print-to-PDF from a browser).
+- **QR-only assets are the quickest.** QR stands, static HTML pages, slideshow slides, invitations, and tickets need typography, color, and the event QR — nothing else. The QR arrives as inline SVG via `event-browse`, so you can author polished SVG and self-contained HTML deliverables entirely in-session. Raster and document output (PNG, PDF, PPTX) additionally depends on the client — use whatever the session provides (artifacts/canvas, image generation, file-creation or code-execution tools, other connected MCP servers); when nothing suitable exists, deliver SVG or HTML and tell the user how to convert (e.g. print-to-PDF from a browser).
 - **Built-in share cards shine as MCP Apps.** When the client supports MCP App widgets, present the pre-built designs through the interactive `card-gallery` widget so the user can browse themes visually before committing (see the next section).
-- **Photo-driven assets belong to the p6a CLI.** Photo posters, collages, and photo recaps/summaries are built from full-quality originals, and inline photo data will not fit the context in major clients — Claude and ChatGPT both struggle with large base64 payloads. Don't attempt them in-session: design the photo-free variant when one makes sense, and otherwise route the user to the p6a workflow (see Step 2).
+- **Photo-driven assets need a scratch space.** Photo posters, collages, and photo recaps are built from full-quality originals. When the client can fetch URLs into a sandbox or scratch space (code execution or file tools — current Claude and ChatGPT apps can), download the originals from `photo-link` there and compose the deliverable from the local files (see Step 2). Photo bytes must never travel through the conversation as base64 — they won't fit the context. Without that capability, design the photo-free variant or a template with marked photo placeholders.
 
 ---
 
@@ -35,13 +35,16 @@ Partoska ships **built-in share card designs** — printable cards with an event
 | `neon` | Parties and nightlife events |
 | `nineties` | Retro parties and 1990s-themed events |
 | `cottage` | Cottage getaways, cabin weekends, countryside retreats |
+| `wish` | Birthday parties and milestone celebrations with balloons and confetti |
+| `velvet` | Formal balls, charity galas, ballroom evenings |
+| `hallows` | Halloween costume parties, pumpkin-carving nights, spooky gatherings |
 
 Two tools, depending on the use case:
 
 - **`card-gallery`** — opens the interactive card gallery. **Call it once with a starting design and omit `includeData` (or leave it `false`)** — the user browses themes inside the MCP App while the widget fetches preview binaries outside model context. Do not loop over designs with repeated tool calls.
 - **`card-link`** — returns a one-time download URL for the full-quality PDF or JPEG. Use when the user needs to download or print the file; if the AI client cannot fetch and save from the URL, hand it to the user to open.
 
-Both tools require event admin access and `design`. Optional values are `locale` (`en`, `cs`, `sk`, `pl`, `ru`, or `es`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`; `card-link` additionally accepts `format` (`pdf` or `jpg`).
+Both tools require event admin access and `design`. Optional values are `locale` (`en`, `cs`, `sk`, `pl`, `ru`, `es`, `de`, `fr`, `it`, `nl`, or `uk`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`; `card-link` additionally accepts `format` (`pdf` or `jpg`).
 
 **When the user asks for a photo-upload card or QR card**, recommend the matching built-in design before offering a custom one. For any other asset type, skip this section entirely and go straight to Step 1.
 
@@ -82,21 +85,20 @@ The vibe drives typography, palette, and tone:
 
 ---
 
-## Step 2: Photos — Default to None In-Session
+## Step 2: Consider Using Event Photos
 
-For the assets you design in-session (QR stand, invitation, ticket, slide, HTML page, photo-free poster), the default is a **photo-free design** — typography, color, and motif carry the vibe. Don't pull photo data into context unless it genuinely changes the outcome.
+For *any* asset type, ask yourself whether a real photo from the event would make the design stronger.
 
-When a photo would help:
+**Posters, HTML pages, collages, and recaps benefit most** from real photos — a single hero image carries an enormous amount of vibe with no design effort. Tickets, invitations, and slides can use photos but it's optional. QR stands usually do *not* need a photo — they lean minimal and the QR itself is the focal point; typography, color, and motif carry the vibe.
 
-### Previews to inform, sparingly
+### When the event already has photos
 
 1. List photos with `photo-list`. Prefer the **most-favorited** ones — they're already validated as visually strong.
-2. Open `photo-gallery` once with a starting item, omitting `includeData` (or leaving it `false`). Let the user browse candidates inside the MCP App; do not fetch each preview through separate tool calls.
-3. Continue after the user selects a candidate in the widget, using their selection and the event metadata to guide palette, mood, and composition.
+2. Open `photo-gallery` once with a starting item, omitting `includeData` (or leaving it `false`). Let the user browse candidates inside the MCP App and pick; do not fetch each preview through separate tool calls.
+3. For each chosen photo, call `photo-link` and immediately download the URL into the client's scratch space — the URL is single-use and expires. Use `preview = false` (default) for print deliverables; `preview = true` is usually enough for screen-sized ones and much smaller.
+4. Compose the deliverable from the local files in the sandbox (resize, crop, lay out, render). For a self-contained HTML page, inline the downloaded and resized images (e.g. as data URIs written by code in the sandbox) — never reference a one-time URL from the deliverable.
 
-### Embedding full quality: hand off to p6a
-
-`photo-gallery` previews are not embedding quality, and the one-time URLs from `photo-link` expire after a single use — never hard-code one into a deliverable. If the user wants real photos *in* the deliverable — a photo poster, collage, or recap — that's a p6a task: point them to `p6a download -e <event-id> -t <dir>` (or `-m <media-id>` for one file). If it helps, still deliver the design in-session as a template with clearly marked photo placeholders they can fill.
+If the client cannot fetch URLs, deliver the design as a template with clearly marked photo placeholders, and hand the user the `photo-link` URLs to download themselves.
 
 ### When the event is new, empty, or has no relevant photos
 
@@ -128,7 +130,7 @@ Larger-format announcement (A3/A2 typical) for display before or during the even
 - **Event name dominates** — it's the single largest element.
 - **Ask** whether to include start/end date (and time). Posters before the event almost always want dates; posters at the venue may not.
 - **QR is secondary** — present so guests can scan, but small relative to the name and imagery. Unless the user explicitly asks for a QR-prominent poster.
-- **A typography-led thematic poster is achievable in-session.** Real photos are the highest-leverage addition, but they turn the poster into a p6a task — see Step 2.
+- **Photos are the highest-leverage addition here** — see Step 2. Offer if available; a typography-led thematic poster works well when they aren't.
 - Style follows the inferred vibe.
 
 ### Ticket
@@ -157,7 +159,7 @@ A self-contained page intended to be displayed on a screen (projector, TV, lobby
 - **Aspect ratio matters** — ask whether the target is 16:9 (most TVs/projectors), 9:16 (vertical signage), or browser-flexible. Design accordingly.
 - **Event name dominates**, similar to a poster.
 - **QR is prominent** when the page is meant for live scanning by guests in the room — large enough to scan from the back row. Embed the SVG QR from `event-browse` inline; never reference a one-time URL from the page.
-- **Photos work very well here** — but a photo-filled page (rotating gallery, hero photo) is a p6a task; see Step 2. In-session, deliver the page with marked photo placeholders or design it QR-and-typography-first.
+- **Photos work very well here** — see Step 2. A rotating gallery or hero photo can fill the screen; inline the downloaded images so the page stays self-contained.
 - Keep CSS self-contained and avoid external font/image dependencies unless the user is hosting it somewhere with internet access.
 
 ### Slideshow Slide
@@ -169,6 +171,27 @@ A single slide for insertion into an existing PPT/Keynote/Google Slides deck —
 - **QR prominent enough to scan** from typical audience distance.
 - **Match the host deck's style** if the user can share it — ask if they have an existing template, brand colors, or font to align with. If not, follow the inferred vibe.
 - Photos optional; one strong hero image works better than a collage at slide scale.
+
+### Collage / Photo Recap
+
+A photo-driven piece built after (or during) the event — a printed collage, a "best of" recap sheet, or a thank-you page around real photos.
+
+- **Photos are the asset** — start with Step 2: list with `photo-list`, favor the most-favorited, let the user pick in `photo-gallery`, then download the picks via `photo-link` into the scratch space.
+- **Curate hard**: 3–9 strong photos with room to breathe beat a tiled dump of everything. Let the user confirm the selection.
+- **Event name small and secondary** — the photos carry it. Date optional as a caption.
+- **QR optional** — a small "relive the event" corner tag works when the recap is shared before the event's upload window closes.
+- **Ask about the destination**: print (PDF) vs. screen/social (PNG/JPG or HTML) changes resolution, aspect ratio, margins, and whether `preview = true` downloads are good enough.
+
+### Recap Story
+
+The event told in order — "the day in 12 photos" — one or two photos per moment, each with a short caption.
+
+- **Find the moments**: list with `photo-list (sort = "taken-asc")` and split the timeline at gaps in taken time (roughly 20–30 minutes) — each cluster is a chapter (arrival, ceremony, dinner, speeches, dancing).
+- **Pick per moment**: one or two photos from each, favorites first; to choose, look at candidates via `photo-link (preview = true)` → download → view (see "Seeing a Photo" in `review.md`), then download the picks in full quality via `photo-link` as in Step 2. Aim for 8–15 photos unless the user asks otherwise, and let them confirm the selection.
+- **Captions**: one short line per photo or moment, in the event's language, describing what is visible or what the moment was ("The toast," "Kids take over the dance floor"). Don't invent facts — names, quotes, who won; use names only when the user supplies them.
+- **Bookends**: open with the event name and date; close with a thank-you line — plus the QR or invite link with an "add yours" nudge if the upload window is still open.
+- **Formats**: a scrolling HTML page or a PDF for keeping, a carousel of square images for social, or a short slideshow. Ask about the destination as for a collage.
+- **Thank-you message**: offer a short draft for the guests' group chat with one highlight and the invite link, so people can see and add photos. Draft it; don't send it yourself.
 
 ---
 

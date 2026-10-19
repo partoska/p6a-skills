@@ -1,10 +1,10 @@
 ---
 name: partoska
-description: Help users manage Partoska.com photo-sharing events through the Partoska MCP server — find and create events, browse/preview/upload/curate photos, approve moderated uploads, share via invite links, QR codes, and printable cards, and design event assets. Use when Partoska MCP tools (e.g. event-query, photo-list) are available in the session.
+description: Help users manage Partoska.com photo-sharing events through the Partoska MCP server — find and create events, browse/preview/upload/curate photos, review photos on the user's behalf (moderate uploads, pick favorites, privacy-check before going public, find a moment), help hosts during a live event (coverage checks, guest nudges, live moderation), share via invite links, QR codes, and printable cards, and design event assets including photo collages and recap stories. Use when Partoska MCP tools (e.g. event-query, photo-list) are available in the session.
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "2.1.1"
+  version: "3.0.0"
 ---
 
 # Partoska Skill
@@ -15,10 +15,19 @@ metadata:
 - `/partoska show me photos from event B-Day`
 - `/partoska create an event for Saturday's BBQ and give me the QR code`
 - `/partoska make a QR stand for the wedding`
+- `/partoska make a collage from the best photos of the BBQ`
+- `/partoska download the favorite photos from Anna's wedding`
+- `/partoska moderate the pending photos at the company party — nothing with drinks or logos`
+- `/partoska favorite the 10 best photos from the BBQ`
+- `/partoska make the wedding public — check the photos first`
+- `/partoska find the cake cutting photos from Ella's party`
+- `/partoska how are the photos going at the party? nudge the guests`
+- `/partoska keep moderating the gala every 20 minutes until midnight`
+- `/partoska make a recap story of the hike`
 
 ## What This Skill Does
 
-This skill makes you an expert on [Partoska.com](https://partoska.com) — a photo-sharing service for events — through the Partoska MCP server (`https://api.partoska.com/mcp/v1`). It covers finding and managing events, browsing and curating photos, uploading, moderation, and sharing via invite links, QR codes, and printable cards.
+This skill makes you an expert on [Partoska.com](https://partoska.com) — a photo-sharing service for events — through the Partoska MCP server (`https://api.partoska.com/mcp/v1`). It covers finding and managing events, browsing and curating photos, uploading, moderation, sharing via invite links, QR codes, and printable cards, and designing event assets. You can also look at photos yourself and act for the user — moderating, curating, privacy-checking — and help a host keep a live event's photo collection going.
 
 The tools below are available when Partoska MCP tools (e.g. `event-query`, `photo-list`) are visible in the session. If they are not, tell the user to connect their AI assistant to the Partoska MCP server at `https://api.partoska.com/mcp/v1` — exact steps depend on the assistant, typically an "Add MCP server" or "Connectors" setting.
 
@@ -37,16 +46,16 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
 ### Event Lifecycle
 
 - **`event-create`** — create a new event by name. Returns the populated event record.
-- **`event-update`** — partially update an event. Send only the fields you intend to change (`name`, `public`, `favorite`, `moderated`, `from`/`to`).
+- **`event-update`** — partially update an event. Send only the fields you intend to change (`name`, `public`, `favorite`, `moderated`, `from`/`to`). All fields except `favorite` require admin access; `favorite` stars the event for the current user and needs only guest access.
 
 ### Photo Inspection & Curation
 
 - **`photo-list`** — list photos for a given event. Use to enumerate before previewing or curating. Check `isApproved` to identify pending photos in a moderated event.
-- **`photo-gallery`** — open an event's interactive photo gallery with metadata, favorite state and count, and navigation. Call it once with a starting photo, omit `includeData` (or leave it `false`), and let the user browse through the MCP App; the widget fetches preview binaries without loading them into model context. For a full-quality download link, use `photo-link`.
-- **`photo-link`** — returns a one-time download URL for a photo. Use when the user explicitly needs to save or download the file. Set `preview = false` (default) for the full-quality original; `preview = true` for a compressed thumbnail.
+- **`photo-gallery`** — open an event's interactive photo gallery with metadata, favorite state and count, and navigation. Call it once with a starting photo, omit `includeData` (or leave it `false`), and let the user browse through the MCP App; the widget fetches preview binaries without loading them into model context. `includeData = true` returns the preview inline, which only helps clients that render it as an image — many return base64 text you cannot see. To look at photos yourself, use the `photo-link` flow in `references/review.md`. For a full-quality download link, use `photo-link`.
+- **`photo-link`** — returns a one-time download URL for a photo. Use when the user needs to save or download the file, or when you need the photo itself in your scratch space — for a collage once the user has picked it, or with `preview = true` to look at photos yourself (see `references/review.md`). Set `preview = false` (default) for the full-quality original; `preview = true` for a compressed thumbnail.
 - **`photo-picker`** — upload a photo or video to an event; also ships as an MCP App widget. When called with only `id`, returns event context (`event`, `name`, `url`, `guests`, `photos`, `allowVideo`, `quota`, `photo: null`) so the MCP App can present the upload UI. When called with `id` + `type` (`image/jpeg`, `video/mp4`, or `video/quicktime`) + `data` (base64 data URL, e.g. `data:image/jpeg;base64,...`), performs the upload and returns the new photo identifier in the `photo` field. In moderated events the upload is created as unapproved until a moderator approves it. **Prefer the MCP App widget path (call with `id` only and let the App handle the rest) over passing `data` directly whenever the client supports it** — base64-encoded photos and videos are large and will bloat the context window.
-- **`photo-favorite`** — toggle favorite on a photo.
-- **`photo-approve`** — approve a photo in a moderated event (requires moderator permission).
+- **`photo-favorite`** — mark (`favorite = true`) or unmark (`favorite = false`) a photo as a favorite for the current user. Explicit, not a toggle.
+- **`photo-approve`** — approve a photo in a moderated event, making it visible to the event's audience — for a public event, that includes anonymous visitors with the invite link — or with `approved = false` put it back on hold, hiding it again from everyone except its author and moderators. Returns the photo's current `isApproved`. Requires moderator permission; only moderated events accept `approved = false`. There is no tool to reject or delete a photo.
 
 > **Photo access note.** `photo-list`, `photo-gallery`, `photo-picker`, and `photo-link` need guest access on a public event, and contributor access on a non-public one.
 
@@ -56,7 +65,7 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
 
 - **`event-browse`** — fetch event details with an inline QR code. Returns the `qrCode` field in the requested `format` (`svg` or `utf8`), plus `url`, favorite state, and `previous`/`next` event IDs for navigation. Also ships as an MCP App widget when the client supports it. Use this when the user wants event details, an inline QR preview, or event navigation. For SVG, save the content to a file (or embed it in an SVG/HTML deliverable) before presenting; for UTF-8, render it directly in a code block.
 - **`event-qr-link`** — returns a one-time download URL for a full-quality QR code file (PNG, SVG, or UTF-8). Use when the user needs to download or save the QR file. For in-context QR preview, use `event-browse` instead.
-- **`card-gallery`** — open the interactive share-card gallery. These are **pre-built themed cards** containing the event's QR code, intended to prompt guests to upload photos — not general-purpose design assets. Call it once with a starting design, omit `includeData` (or leave it `false`), and let the user browse designs through the MCP App; the widget fetches preview binaries without loading them into model context. Requires event admin access and `design`; optional values are `locale` (`en`, `cs`, `sk`, `pl`, `ru`, or `es`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`.
+- **`card-gallery`** — open the interactive share-card gallery. These are **pre-built themed cards** containing the event's QR code, intended to prompt guests to upload photos — not general-purpose design assets. Call it once with a starting design, omit `includeData` (or leave it `false`), and let the user browse designs through the MCP App; the widget fetches preview binaries without loading them into model context. Requires event admin access and `design`; optional values are `locale` (`en`, `cs`, `sk`, `pl`, `ru`, `es`, `de`, `fr`, `it`, `nl`, or `uk`), `layout` (`single` or `business`), `paper` (`a4` or `letter`), and boolean `background`.
   - `bday` — birthday parties and anniversaries
   - `tech` — corporate events, conferences, hackathons
   - `match` — sport events and tournaments
@@ -68,11 +77,14 @@ Tool names below are the canonical Partoska MCP tool names. Different MCP client
   - `neon` — parties and nightlife events
   - `nineties` — retro parties and 1990s-themed events
   - `cottage` — cottage getaways, cabin weekends, countryside retreats
+  - `wish` — birthday parties and milestone celebrations with balloons and confetti
+  - `velvet` — formal balls, charity galas, ballroom evenings
+  - `hallows` — Halloween costume parties, pumpkin-carving nights, spooky gatherings
 - **`card-link`** — returns a one-time download URL for a full-quality card file. Requires event admin access and `design`; accepts `format` (`pdf` or `jpg`) plus the same locale, layout, paper, and background options as `card-gallery`. Use when the user needs to download or print the card. For an in-context preview, use `card-gallery` instead.
 
-> **MCP Apps note.** `event-browse`, `photo-gallery`, `photo-picker`, and `card-gallery` ship as MCP App widgets — prefer them for browsing, navigating, previewing, and uploading. Open a gallery once, keep `includeData` omitted or `false`, and let the user browse inside the App; do not loop over gallery items with repeated tool calls. Use `event-qr-link`, `photo-link`, and `card-link` when the user explicitly needs a download URL for the file.
+> **MCP Apps note.** `event-browse`, `photo-gallery`, `photo-picker`, and `card-gallery` ship as MCP App widgets — prefer them for browsing, navigating, previewing, and uploading. Open a gallery once, keep `includeData` omitted or `false`, and let the user browse inside the App; do not loop over gallery items with repeated tool calls. To look at photos yourself, use `photo-link` instead (see `references/review.md`). Use `event-qr-link`, `photo-link`, and `card-link` when the user needs the file itself, or you need it in your scratch space to build a deliverable.
 
-> **One-time URL note.** The URLs returned by `photo-link`, `card-link`, and `event-qr-link` are single-use and expire. They are the primary path to full-quality files when the AI client is allowed to fetch and save from URLs; when it isn't, hand the URL to the user to open themselves. Never embed a one-time URL into a deliverable (e.g. an HTML page) that will be opened more than once.
+> **One-time URL note.** The URLs returned by `photo-link`, `card-link`, and `event-qr-link` are single-use and expire. They are the primary path to full-quality files: when the AI client can fetch URLs (code execution, a sandbox, or file tools), download each one right away into its scratch space and work from the local file — never pull the bytes into the conversation as base64. When it can't, hand the URL to the user to open themselves. Never embed a one-time URL into a deliverable (e.g. an HTML page) that will be opened more than once.
 
 ---
 
@@ -99,7 +111,7 @@ When the user says "show me photos from the Birthday event," resolve the event w
 2. photo-approve for each pending photo id
 ```
 
-Iterate the call rather than batching — there is no bulk approve tool.
+Iterate the call rather than batching — there is no bulk approve tool. Use this only when the user explicitly wants everything approved unseen; when they ask you to *moderate*, *check*, or *review* the uploads, follow `references/review.md`.
 
 ### Workflow: Curate Favorites Across an Event
 
@@ -110,7 +122,20 @@ Iterate the call rather than batching — there is no bulk approve tool.
    → open the MCP App once; the user browses and toggles favorites in the gallery
 ```
 
-The gallery widget invokes `photo-favorite` for the user's toggles. Call `photo-favorite` directly only when the App is unavailable or the user provides a specific photo ID without needing to browse.
+The gallery widget invokes `photo-favorite` for the user's toggles. Call `photo-favorite` directly when the App is unavailable, when the user provides a specific photo ID without needing to browse, or when the user asks you to pick favorites yourself (see `references/review.md`).
+
+### Workflow: Work with Full-Quality Photos
+
+```
+1. photo-list (id = <id>)
+   → pick photos (favorites first) or let the user pick in photo-gallery
+2. photo-link (id = <id>, photo = <photo-id>) for each pick
+   → fetch each one-time URL immediately into the client's scratch space
+3. work from the local files (collage, recap, resize, analysis)
+   → to hand the photos themselves to the user, package them (e.g. a zip) as a downloadable file
+```
+
+Never pull photo bytes into the conversation as base64. If the client can't fetch URLs, hand the links to the user instead.
 
 ### Workflow: Create and Share a New Event
 
@@ -125,24 +150,19 @@ The gallery widget invokes `photo-favorite` for the user's toggles. Call `photo-
 
 ---
 
-## Beyond MCP: the p6a CLI
+## Task Guides
 
-Partoska also ships **p6a**, a command-line tool available at [github.com/partoska/p6a-cmd](https://github.com/partoska/p6a-cmd) and installable, e.g., via `npm install -g @partoska/p6a`. MCP covers nearly everything in-session; point users to p6a only when:
+Load the matching reference **before** starting any of these tasks:
 
-- **Bulk backup.** There is no MCP equivalent of `p6a sync`, which downloads all events into organized subdirectories and safely skips already-downloaded files.
-- **Full-quality files the client can't fetch.** When the AI client cannot fetch and save from the one-time URLs returned by `photo-link` / `card-link` / `event-qr-link`, hand the URL to the user — or for many files, suggest `p6a download -e <event-id> -t <dir>`.
-- **Scripts, cron jobs, CI.** Anything the user will run outside an agent session must use `p6a` commands — MCP tools only exist inside an active agent session.
-- **Photo-driven design assets.** Photo posters, collages, and photo recaps are built from full-quality originals that won't fit the context inline — resolve the event in-session, then hand off to `p6a download` (see `references/design.md`).
+| Task | Reference |
+| --- | --- |
+| Looking at photos yourself and acting on them — moderating pending uploads, picking favorite photos or events, a privacy check before making an event public, finding a specific moment. **Requires** a shell or code execution that can download files, plus an image-viewing tool | `references/review.md` |
+| Helping a host during a live event — how photo collection is going, gaps in coverage, nudging guests to upload, live moderation on a schedule | `references/hosting.md` |
+| Designing an asset — QR stand, poster, ticket, invitation, HTML page, slide, collage, photo recap, recap story — or recommending a built-in share card | `references/design.md` |
 
-Event IDs are UUIDs and interchangeable between surfaces — an id obtained from `event-query` works in `p6a download -e <id>` without translation.
+Listing photos, favoriting a photo the user named, event settings, QR codes, cards, and sharing need no vision. Anything that judges photo content — moderating, picking favorites, the privacy check, finding a moment, live moderation — needs you to actually see the photos. If the session can't (see `references/review.md`), say so instead of guessing, and never approve, favorite, or describe a photo you haven't seen.
 
----
-
-## Design Tasks
-
-Partoska users frequently ask for design assets tied to their events — most commonly **QR stands** (table signage that points guests to the event's photo upload page), **posters**, **tickets**, **invitations**, and screen-displayed assets like **static HTML pages** or **slideshow slides** (projector / TV / lobby display).
-
-When the user requests any of these, **load `references/design.md` first** before producing anything. It covers what is deliverable in-session — QR-only assets (stands, HTML pages, slides, invitations, tickets) are the sweet spot since the QR arrives as inline SVG via `event-browse`, and built-in share cards present best through the interactive `card-gallery` MCP App widget — plus vibe inference from event metadata, asset-specific conventions, and when to route photo-driven assets (photo posters, collages, photo recaps) to the p6a CLI.
+When the user asks to make an event public, offer the privacy check from `references/review.md` before calling `event-update (public = true)`.
 
 ---
 
@@ -151,4 +171,3 @@ When the user requests any of these, **load `references/design.md` first** befor
 - Treat MCP responses as structured data defined by each tool's output schema; don't assume field names.
 - Need an invite URL? `event-query` and `event-browse` both return `url` — no separate tool call needed.
 - Use `fetch` only for simplified event details by ID (ChatGPT-compatible result shape).
-- If the user will rerun the work later (e.g. nightly), don't perform it via MCP — produce a `p6a` script instead so it survives outside the session.
