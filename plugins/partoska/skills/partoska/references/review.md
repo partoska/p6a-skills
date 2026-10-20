@@ -8,7 +8,9 @@ Do this only when the user asks for it, in this session or through a standing in
 
 ## Before You Start
 
-Every task in this reference depends on actually seeing the photos. Listing photos, favoriting a photo the user named, event settings, QR codes, and sharing need no vision; moderating, picking favorites, the privacy check, and finding a moment do. Check that the session can see photos (next section) before promising any of them. If it can't, tell the user you can't review photos visually here and stop. Never approve, favorite, clear, or describe a photo you have not seen.
+Tasks that judge photo content — moderation against rules, choosing favorites, a privacy check, or finding a moment — depend on actually seeing the photos. Check that the session can see photos (next section) before promising those tasks. If it can't, explain that you cannot perform the visual review here; do not make content-based approval or favorite decisions, clear a photo as safe, or describe unseen content.
+
+Explicit user commands to approve, put on hold, favorite, or unfavorite identified photos do not require vision. Neither does an explicit request to approve all pending media without review; follow that workflow in `../SKILL.md`. Resolve the exact event and items, preserve the requested scope, and never claim that carrying out a state change means you inspected the content. Listing photos, event settings, QR codes, and sharing also need no vision.
 
 ## Seeing a Photo
 
@@ -48,7 +50,7 @@ Calling `photo-gallery (includeData = true)` directly, outside a code sandbox, p
 Also:
 
 - **Narrow first.** Use `photo-list` filters, sort order, and timestamps to look at as few photos as the task needs.
-- **Access errors.** If `photo-link` or `photo-gallery` returns "Photo not found or access denied," the photo isn't necessarily gone — access can depend on permissions or server state, and pending photos have been refused at first and worked later. Tell the user, leave the photo pending, and never approve it unseen.
+- **Access errors.** If `photo-link` or `photo-gallery` returns "Photo not found or access denied," the photo isn't necessarily gone — access can depend on permissions or server state, and pending photos have been refused at first and worked later. Tell the user, leave the photo pending, and do not approve it as part of this visual review.
 - **Videos.** A preview can't show a whole video — don't approve, favorite, or clear one on that basis; flag it for the user instead.
 - **Show, don't describe.** When you report specific photos, open `photo-gallery` (with `includeData` omitted) on the first one so the user can see it in the MCP App.
 

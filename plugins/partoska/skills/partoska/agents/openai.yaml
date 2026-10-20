@@ -1,8 +1,8 @@
 interface:
   display_name: "Partoska"
   short_description: "Manage Partoska events and photos through MCP"
-  icon_small: "./assets/logo-small.png"
-  icon_large: "./assets/logo.png"
+  icon_small: "./assets/icon-small.png"
+  icon_large: "./assets/icon-large.png"
   default_prompt: "Use $partoska to manage my event, browse photos, or create a sharing asset."
 
 dependencies:

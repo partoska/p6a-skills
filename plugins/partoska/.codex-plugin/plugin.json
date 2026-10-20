@@ -1,6 +1,6 @@
 {
   "name": "partoska",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Manage Partoska photo-sharing events through MCP: photos, moderation, QR codes, and printable cards",
   "author": {
     "name": "Partoska Laboratory",
@@ -21,15 +21,15 @@
     "category": "Productivity",
     "capabilities": ["Interactive", "Read", "Write"],
     "websiteURL": "https://www.partoska.com",
-    "privacyPolicyURL": "https://www.partoska.com/en/legal/privacy-policy",
-    "termsOfServiceURL": "https://www.partoska.com/en/legal/terms-of-service",
+    "privacyPolicyURL": "https://www.partoska.com/legal/privacy-policy",
+    "termsOfServiceURL": "https://www.partoska.com/legal/terms-of-service",
     "defaultPrompt": [
       "Show me the latest photos from my event",
       "Create an event for Saturday and give me the QR code",
       "Moderate the pending photos at my party"
     ],
-    "composerIcon": "./skills/partoska/assets/logo-small.png",
-    "logo": "./skills/partoska/assets/logo.png",
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/logo.png",
     "screenshots": []
   }
 }

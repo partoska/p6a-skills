@@ -4,7 +4,7 @@ description: Help users manage Partoska.com photo-sharing events through the Par
 license: MIT
 metadata:
   author: Partoska Laboratory
-  version: "3.0.0"
+  version: "3.0.1"
 ---
 
 # Partoska Skill
@@ -161,7 +161,7 @@ Load the matching reference **before** starting any of these tasks:
 | Helping a host during a live event — how photo collection is going, gaps in coverage, nudging guests to upload, live moderation on a schedule | `references/hosting.md` |
 | Designing an asset — QR stand, poster, ticket, invitation, HTML page, slide, collage, photo recap, recap story — or recommending a built-in share card | `references/design.md` |
 
-Listing photos, favoriting a photo the user named, event settings, QR codes, cards, and sharing need no vision. Anything that judges photo content — moderating, picking favorites, the privacy check, finding a moment, live moderation — needs you to actually see the photos. If the session can't (see `references/review.md`), say so instead of guessing, and never approve, favorite, or describe a photo you haven't seen.
+Listing photos, event settings, QR codes, cards, and sharing need no vision. Neither do explicit user commands to approve, put on hold, favorite, or unfavorite identified photos, or to approve all pending media without review. Resolve the exact event and items and follow the user's requested scope. Anything that judges photo content — moderating against rules, choosing favorites, the privacy check, finding a moment, live moderation — requires you to actually see the photos. If the session can't (see `references/review.md`), explain that limit and do not make content-based decisions or claims about unseen photos.
 
 When the user asks to make an event public, offer the privacy check from `references/review.md` before calling `event-update (public = true)`.
 
