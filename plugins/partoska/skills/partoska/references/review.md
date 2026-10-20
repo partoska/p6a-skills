@@ -12,21 +12,43 @@ Every task in this reference depends on actually seeing the photos. Listing phot
 
 ## Seeing a Photo
 
-The reliable path downloads previews into your scratch space and opens them as images. It needs a shell or code execution that can reach the download host, plus a way to view an image file (e.g. a file-read tool that displays images).
+**Move the bytes, not the URLs.** Before requesting any links, check what the session can actually do, then pick the path that fits. `photo-link` URLs are only useful if something in the session can make an HTTP request; if nothing can, skip straight to the gallery data path instead of burning one-time links.
+
+### Path A: Download Previews
+
+Use this when a shell or code execution can reach the download host (e.g. `curl`, `wget`, or an HTTP library with network access), plus there is a way to view an image file (e.g. a file-read tool that displays images).
 
 1. **Get links.** Call `photo-link (id = <id>, photo = <photo-id>, preview = true)` for every photo in the batch, all in the same turn. The compressed preview is enough for judging; don't fetch originals for this.
 2. **Download at once.** In one shell command, download every URL immediately into a fresh empty directory, one simple filename per photo (e.g. `<photo-id>.jpg`). Check for HTTP 200 and run `file` to confirm each is a JPEG. The links are single-use and expire: never retry a failed or used URL — request a new link instead.
 3. **View.** Open every downloaded file with your image-viewing tool, all in the same turn.
 4. **Log.** Record photo id → decision → reason, so the final report doesn't depend on photos still being in context.
 
-That is about three round trips for a batch of ten photos instead of thirty. Keep batches to roughly 10–20 photos; on a large event, work batch by batch, and if you stop before the end, say how far you got. Delete the download directories when done.
+### Path B: Write Gallery Data to Files
 
-`photo-gallery` with `includeData = true` is a fallback only for clients that show its result as an actual image. Many clients return it as base64 text you cannot see, which also floods the context with tens of thousands of characters per photo — if that's what you get, don't use it again.
+Use this when the shell cannot fetch URLs (no `curl` or `wget`, no network, e.g. a sandboxed client). Don't abandon the review if the session can do all three of these:
+
+- run code that calls MCP tools, so `photo-gallery (includeData = true)` can be called from inside the code sandbox;
+- write files to a filesystem;
+- send an image file to a vision tool or open it with an image-viewing tool.
+
+Here `includeData = true` is a data-transfer path, not a way to render the photo. The base64 must never pass through your own context:
+
+1. **Fetch inside the sandbox.** From code, call `photo-gallery (id = <id>, photo = <photo-id>, includeData = true)`, one call per photo. The returned preview is already compressed and enough for judging.
+2. **Write, don't read.** Write the returned base64 data straight to a scratch file in a fresh empty directory (e.g. `<photo-id>.b64`), from the code itself or via the file tools. Never print it, return it as the code's output, or otherwise surface it in the conversation.
+3. **Decode.** Run `base64 -d <photo-id>.b64 > <photo-id>.jpg` (strip any `data:image/jpeg;base64,` prefix first), then `file` to confirm each is a JPEG.
+4. **Analyze.** Send every JPEG in the batch to the vision tool, with all the calls in parallel in the same turn.
+5. **Log.** As in Path A.
+
+### Batches and Limits
+
+Either path takes a few round trips per batch instead of one per photo. Keep batches to roughly 1–5 photos; on a large event, work batch by batch, and if you stop before the end, say how far you got. Delete the scratch directories when done.
+
+Calling `photo-gallery (includeData = true)` directly, outside a code sandbox, puts its result into your context. Only a few clients show it as an actual image; many return base64 text you cannot see, which also floods the context with tens of thousands of characters per photo. If that's what you get, don't call it that way again: use Path B if the session supports it, and otherwise tell the user you can't review photos visually here.
 
 Also:
 
 - **Narrow first.** Use `photo-list` filters, sort order, and timestamps to look at as few photos as the task needs.
-- **Access errors.** If `photo-link` returns "Photo not found or access denied," the photo isn't necessarily gone — access can depend on permissions or server state, and pending photos have been refused at first and worked later. Tell the user, leave the photo pending, and never approve it unseen.
+- **Access errors.** If `photo-link` or `photo-gallery` returns "Photo not found or access denied," the photo isn't necessarily gone — access can depend on permissions or server state, and pending photos have been refused at first and worked later. Tell the user, leave the photo pending, and never approve it unseen.
 - **Videos.** A preview can't show a whole video — don't approve, favorite, or clear one on that basis; flag it for the user instead.
 - **Show, don't describe.** When you report specific photos, open `photo-gallery` (with `includeData` omitted) on the first one so the user can see it in the MCP App.
 
@@ -49,7 +71,7 @@ Also:
    → resolve the id; check isModerated
 2. photo-list (id = <id>, sort = "uploaded-asc")
    → keep items where isApproved == false
-3. for each batch: photo-link (preview = true) → download → view, as in "Seeing a Photo"
+3. for each batch: get the previews and view them, as in "Seeing a Photo"
    → judge each photo against the rules; log the decision and reason
 4. photo-approve (id = <id>, photo = <photo-id>) for each clear pass
 5. report: the rules applied, number approved, then each photo left pending with its reason
@@ -76,7 +98,7 @@ To find photos to put on hold, review the approved ones as in "Workflow: Moderat
 ```
 1. photo-list (id = <id>, sort = "favorites-dsc")
    → candidates; other guests' favorite counts are a useful signal; skip photos the user already favorited
-2. photo-link (id = <id>, photo = <photo-id>, preview = true) for a batch of candidates → download → view, as in "Seeing a Photo"
+2. view a batch of candidates' previews, as in "Seeing a Photo"
    → judge them; pick the best shot of each burst of near-duplicates
 3. photo-favorite (id = <id>, photo = <photo-id>, favorite = true) for each pick
 4. report the picks; offer to unmark any the user disagrees with
@@ -97,7 +119,7 @@ Making an event public lets anyone with the invite link — including anonymous 
    → resolve the id; check isModerated
 2. photo-list (id = <id>)
    → the photos that will become visible: approved ones in a moderated event, all of them otherwise
-3. photo-link (id = <id>, photo = <photo-id>, preview = true) for each batch → download → view, as in "Seeing a Photo"
+3. view each batch's previews, as in "Seeing a Photo"
    → flag anything listed below; log the reason
 4. report the flagged photos, opening photo-gallery on the first one
 5. moderated event: photo-approve (id = <id>, photo = <photo-id>, approved = false) for each flagged photo the user wants hidden
@@ -123,7 +145,7 @@ In a moderated event you can put flagged photos back on hold, once the user says
 ```
 1. photo-list (id = <id>, sort = "taken-asc")
    → if the user gives a time hint ("around 8 pm"), start with the photos taken near it
-2. photo-link (id = <id>, photo = <photo-id>, preview = true) for a batch of candidates near the best guess → download → view, as in "Seeing a Photo"
+2. view the previews of a batch of candidates near the best guess, as in "Seeing a Photo"
    → no match: take the next batch, working outward in time
    → stop once you have what the user asked for; don't scan the whole event for one photo
 3. report the matches and open photo-gallery on the best one

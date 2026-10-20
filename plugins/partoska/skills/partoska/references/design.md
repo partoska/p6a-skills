@@ -187,7 +187,7 @@ A photo-driven piece built after (or during) the event — a printed collage, a 
 The event told in order — "the day in 12 photos" — one or two photos per moment, each with a short caption.
 
 - **Find the moments**: list with `photo-list (sort = "taken-asc")` and split the timeline at gaps in taken time (roughly 20–30 minutes) — each cluster is a chapter (arrival, ceremony, dinner, speeches, dancing).
-- **Pick per moment**: one or two photos from each, favorites first; to choose, look at candidates via `photo-link (preview = true)` → download → view (see "Seeing a Photo" in `review.md`), then download the picks in full quality via `photo-link` as in Step 2. Aim for 8–15 photos unless the user asks otherwise, and let them confirm the selection.
+- **Pick per moment**: one or two photos from each, favorites first; to choose, look at candidates' previews (see "Seeing a Photo" in `review.md`), then download the picks in full quality via `photo-link` as in Step 2. Aim for 8–15 photos unless the user asks otherwise, and let them confirm the selection.
 - **Captions**: one short line per photo or moment, in the event's language, describing what is visible or what the moment was ("The toast," "Kids take over the dance floor"). Don't invent facts — names, quotes, who won; use names only when the user supplies them.
 - **Bookends**: open with the event name and date; close with a thank-you line — plus the QR or invite link with an "add yours" nudge if the upload window is still open.
 - **Formats**: a scrolling HTML page or a PDF for keeping, a carousel of square images for social, or a short slideshow. Ask about the destination as for a collage.

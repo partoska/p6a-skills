@@ -20,7 +20,7 @@ What to report, briefly:
 
 - **Volume.** Photos so far versus guests who joined, and how many arrived in the last hour.
 - **Gaps in time.** Bucket photos by taken time (e.g. 30-minute slots) across the event window and point out empty or thin stretches — "nothing between 21:00 and 22:30." Taken timestamps come from the camera and may be in UTC or off by a time zone; say so if the gaps look suspicious.
-- **Gaps in moments.** If the user names moments that matter (speeches, first dance, award ceremony), check whether photos exist around those times. To confirm, look at a few photos from around those times — `photo-link (preview = true)` → download → view, as in "Seeing a Photo" in `review.md` — don't scan the whole event.
+- **Gaps in moments.** If the user names moments that matter (speeches, first dance, award ceremony), check whether photos exist around those times. To confirm, look at a few photos from around those times — view their previews as in "Seeing a Photo" in `review.md` — don't scan the whole event.
 - **Moderation backlog.** In a moderated event, the number of photos still pending. Other guests can't see those uploads until they are approved, and a gallery that looks empty discourages more uploads — offer to moderate (`review.md`).
 
 The photo list doesn't reliably tell you *which* guests have uploaded, so don't name people who haven't.
