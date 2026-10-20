@@ -1,0 +1,14 @@
+{
+  "name": "partoska",
+  "version": "3.0.0",
+  "description": "Manage Partoska photo-sharing events through MCP: photos, moderation, QR codes, and printable cards",
+  "author": {
+    "name": "Partoska Laboratory",
+    "email": "ask@partoska.com",
+    "url": "https://lab.partoska.com"
+  },
+  "homepage": "https://www.partoska.com",
+  "repository": "https://github.com/partoska/p6a-skills",
+  "license": "MIT",
+  "keywords": ["partoska", "photos", "events", "sharing", "qr-code", "mcp"]
+}

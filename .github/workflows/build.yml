@@ -38,10 +38,37 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Pack skills
+      - name: Validate plugins
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate .
+          for plugin in plugins/*/; do
+            claude plugin validate "$plugin"
+            VERSION=$(jq -r .version "$plugin/.claude-plugin/plugin.json")
+            CODEX_VERSION=$(jq -r .version "$plugin/.codex-plugin/plugin.json")
+            if [ "$CODEX_VERSION" != "$VERSION" ]; then
+              echo "::error::$plugin: Codex version $CODEX_VERSION != Claude version $VERSION"
+              exit 1
+            fi
+            for skill in "$plugin"skills/*/SKILL.md; do
+              SKILL_VERSION=$(grep '^  version:' "$skill" | sed 's/.*"\(.*\)"/\1/')
+              if [ "$SKILL_VERSION" != "$VERSION" ]; then
+                echo "::error::$skill: version $SKILL_VERSION != plugin version $VERSION"
+                exit 1
+              fi
+            done
+          done
+      - name: Pack plugins and skills
         run: |
           ARTIFACTS=""
-          for dir in skills/*/; do
+          for dir in plugins/*/; do
+            PLUGIN_NAME=$(jq -r .name "$dir/.codex-plugin/plugin.json")
+            PLUGIN_VERSION=$(jq -r .version "$dir/.codex-plugin/plugin.json")
+            ARTIFACT="${PLUGIN_NAME}_plugin_v${PLUGIN_VERSION}.zip"
+            (cd "$dir" && zip -r "$GITHUB_WORKSPACE/$ARTIFACT" .)
+            ARTIFACTS="$ARTIFACTS $GITHUB_WORKSPACE/$ARTIFACT#$ARTIFACT"
+          done
+          for dir in plugins/*/skills/*/; do
             SKILL=$(basename "$dir")
             VERSION=$(grep '^  version:' "$dir/SKILL.md" | sed 's/.*"\(.*\)"/\1/')
             ARTIFACT="${SKILL}_skill_v${VERSION}.zip"

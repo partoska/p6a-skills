@@ -1,0 +1,20 @@
+{
+  "name": "partoska",
+  "interface": {
+    "displayName": "Partoska"
+  },
+  "plugins": [
+    {
+      "name": "partoska",
+      "source": {
+        "source": "local",
+        "path": "./plugins/partoska"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

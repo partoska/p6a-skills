@@ -1,0 +1,35 @@
+{
+  "name": "partoska",
+  "version": "3.0.0",
+  "description": "Manage Partoska photo-sharing events through MCP: photos, moderation, QR codes, and printable cards",
+  "author": {
+    "name": "Partoska Laboratory",
+    "email": "ask@partoska.com",
+    "url": "https://lab.partoska.com"
+  },
+  "homepage": "https://www.partoska.com",
+  "repository": "https://github.com/partoska/p6a-skills",
+  "license": "MIT",
+  "keywords": ["partoska", "photos", "events", "sharing", "qr-code", "mcp"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Partoska",
+    "shortDescription": "Manage event photos",
+    "longDescription": "Use Partoska to find and create photo-sharing events, browse, upload, and curate photos, moderate guest uploads, share events via invite links, QR codes, and printable cards, and design event assets such as collages and recap stories.",
+    "developerName": "Partoska Laboratory",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://www.partoska.com",
+    "privacyPolicyURL": "https://www.partoska.com/en/legal/privacy-policy",
+    "termsOfServiceURL": "https://www.partoska.com/en/legal/terms-of-service",
+    "defaultPrompt": [
+      "Show me the latest photos from my event",
+      "Create an event for Saturday and give me the QR code",
+      "Moderate the pending photos at my party"
+    ],
+    "composerIcon": "./skills/partoska/assets/logo-small.png",
+    "logo": "./skills/partoska/assets/logo.png",
+    "screenshots": []
+  }
+}

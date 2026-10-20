@@ -1,0 +1,19 @@
+{
+  "name": "partoska",
+  "owner": {
+    "name": "Partoska Laboratory",
+    "email": "ask@partoska.com"
+  },
+  "metadata": {
+    "description": "Partoska.com plugins for AI agents"
+  },
+  "plugins": [
+    {
+      "name": "partoska",
+      "source": "./plugins/partoska",
+      "description": "Manage Partoska photo-sharing events through MCP: photos, moderation, QR codes, and printable cards",
+      "category": "productivity",
+      "homepage": "https://www.partoska.com"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "partoska": {
+      "type": "http",
+      "url": "https://api.partoska.com/mcp/v1"
+    }
+  }
+}
