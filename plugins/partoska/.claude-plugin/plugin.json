@@ -8,6 +8,7 @@
     "url": "https://lab.partoska.com"
   },
   "homepage": "https://www.partoska.com",
+  "privacyPolicyUrl": "https://www.partoska.com/legal/privacy-policy",
   "repository": "https://github.com/partoska/p6a-skills",
   "license": "MIT",
   "keywords": ["partoska", "photos", "events", "sharing", "qr-code", "mcp"]
