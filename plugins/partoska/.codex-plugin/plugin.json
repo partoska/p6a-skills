@@ -1,7 +1,7 @@
 {
   "name": "partoska",
   "version": "3.0.1",
-  "description": "Manage Partoska photo-sharing events through MCP: photos, moderation, QR codes, and printable cards",
+  "description": "Run Partoska photo-sharing events: create events, moderate guest uploads, pick favorites, and share via QR codes and printable cards",
   "author": {
     "name": "Partoska Laboratory",
     "email": "ask@partoska.com",
@@ -15,8 +15,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Partoska",
-    "shortDescription": "Manage event photos",
-    "longDescription": "Use Partoska to find and create photo-sharing events, browse, upload, and curate photos, moderate guest uploads, share events via invite links, QR codes, and printable cards, and design event assets such as collages and recap stories.",
+    "shortDescription": "Manage guest photos at events",
+    "longDescription": "Partoska collects photos from guests at weddings, birthdays, and parties through an invite link or QR code. Use it to create and update events, browse and upload photos, moderate guest uploads, pick favorites, check photos before an event goes public, and share via invite links, QR codes, and printable cards. It can also design event assets such as posters, collages, and recap stories.",
     "developerName": "Partoska Laboratory",
     "category": "Productivity",
     "capabilities": ["Interactive", "Read", "Write"],

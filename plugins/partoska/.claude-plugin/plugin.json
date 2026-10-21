@@ -2,7 +2,7 @@
   "name": "partoska",
   "displayName": "Partoska",
   "version": "3.0.1",
-  "description": "Manage Partoska photo-sharing events through MCP: photos, moderation, QR codes, and printable cards",
+  "description": "Run Partoska photo-sharing events: create events, moderate guest uploads, pick favorites, and share via QR codes and printable cards",
   "author": {
     "name": "Partoska Laboratory",
     "email": "ask@partoska.com",

@@ -11,7 +11,7 @@
     {
       "name": "partoska",
       "source": "./plugins/partoska",
-      "description": "Manage Partoska photo-sharing events through MCP: photos, moderation, QR codes, and printable cards",
+      "description": "Run Partoska photo-sharing events: create events, moderate guest uploads, pick favorites, and share via QR codes and printable cards",
       "category": "productivity",
       "homepage": "https://www.partoska.com"
     }
