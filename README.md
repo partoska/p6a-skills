@@ -63,3 +63,5 @@ Developed by [Partoska Laboratory](https://lab.partoska.com) team.
 ## Links
 
 - **Partoska Website:** [https://www.partoska.com](https://www.partoska.com)
+- **Privacy Policy:** [https://www.partoska.com/legal/privacy-policy](https://www.partoska.com/legal/privacy-policy)
+- **Terms of Service:** [https://www.partoska.com/legal/terms-of-service](https://www.partoska.com/legal/terms-of-service)
