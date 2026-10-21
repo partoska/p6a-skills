@@ -1,5 +1,6 @@
 {
   "name": "partoska",
+  "displayName": "Partoska",
   "version": "3.0.1",
   "description": "Manage Partoska photo-sharing events through MCP: photos, moderation, QR codes, and printable cards",
   "author": {
@@ -8,7 +9,7 @@
     "url": "https://lab.partoska.com"
   },
   "homepage": "https://www.partoska.com",
-  "documentationUrl": "https://github.com/partoska/p6a-skills#readme",
+  "documentationUrl": "https://www.partoska.com/features/skill-for-ai-agents",
   "supportUrl": "https://www.partoska.com/contact",
   "privacyPolicyUrl": "https://www.partoska.com/legal/privacy-policy",
   "termsOfServiceUrl": "https://www.partoska.com/legal/terms-of-service",
